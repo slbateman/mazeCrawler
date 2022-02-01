@@ -1,20 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { View } from "react-native";
+import { GLView } from "expo-gl";
+import createRender from "./elements/render"
+import mazeGenerator from "./elements/objects/maze";
+
 
 export default function App() {
+
+  mazeGenerator(1)
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1 }}>
+      <GLView
+        style={{ flex: 1 }}
+        onContextCreate={createRender}
+      ></GLView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

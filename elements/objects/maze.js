@@ -1,6 +1,3 @@
-import { random } from "core-js/core/number";
-import { x } from "joi";
-import { next } from "sucrase/dist/parser/tokenizer";
 import * as THREE from "three";
 import groundTextureImg from "../../assets/groundTexture.jpeg";
 import wallTextureImg from "../../assets/wallTexture.jpeg";
@@ -18,9 +15,70 @@ const mazeGenerator = (level) => {
     side: THREE.DoubleSide,
   });
   const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-  // ground.position.set(mazeSize / 2, mazeSize / 2);
+  ground.position.set((mazeSize * 5) / 2, (mazeSize * 5) / 2);
   ground.receiveShadow = true;
   mazeCompleted.add(ground);
+
+  // maze wall dimensions, x=length, y=thickness, z=height
+  const wallDimensions = { x: 5, y: 1, z: 3 };
+  const wallTexture = new THREE.TextureLoader().load(wallTextureImg);
+  const wallGeometry = new THREE.BoxGeometry(
+    wallDimensions.x,
+    wallDimensions.y,
+    wallDimensions.z
+  );
+  const wallMaterial = new THREE.MeshStandardMaterial({
+    map: wallTexture,
+  });
+
+  const pillarGeometry = new THREE.CylinderGeometry(.75, .75, 3);
+
+  for (let i = 0; i <= mazeSize; i++){
+    for (let j = 0; j <= mazeSize; j++){
+      const pillar = new THREE.Mesh(pillarGeometry, wallMaterial);
+      pillar.position.set(j*5, i*5, 1.5)
+      pillar.rotation.x = 1.5708
+      mazeCompleted.add(pillar)
+    }
+  }
+
+  const constructWalls = (finishedCells) => {
+    for (let i = 0; i < mazeSize; i++) {
+      for (let j = 0; j < mazeSize; j++) {
+        if (finishedCells[i][j].wallRight === 1) {
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+          wall.rotation.z = 1.5708;
+          wall.position.set(j * 5 + 5, i * 5 + 2.5, 1.5);
+          wall.castShadow = true;
+          wall.receiveShadow = true;
+          mazeCompleted.add(wall);
+        }
+        if (finishedCells[i][j].wallLeft === 1) {
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+          wall.rotation.z = 1.5708;
+          wall.position.set(j * 5, i * 5 + 2.5, 1.5);
+          wall.castShadow = true;
+          wall.receiveShadow = true;
+          mazeCompleted.add(wall);
+        }
+        if (finishedCells[i][j].wallDown === 1) {
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+          wall.position.set(j * 5 + 2.5, i * 5, 1.5);
+          wall.castShadow = true;
+          wall.receiveShadow = true;
+          mazeCompleted.add(wall);
+        }
+        if (finishedCells[i][j].wallUp === 1) {
+          const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+          wall.position.set(j * 5 + 2.5, i * 5 + 5, 1.5);
+          wall.castShadow = true;
+          wall.receiveShadow = true;
+          mazeCompleted.add(wall);
+        }
+      }
+    }
+    mazeCompleted.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0);
+  };
 
   const cells = [];
   for (let i = 0; i < mazeSize; i++) {
@@ -57,33 +115,35 @@ const mazeGenerator = (level) => {
     let neighbors = findNeighbors(currentCell);
     if (neighbors.length > 0) {
       let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
-      if (nextCell.i == currentCell.i + 1 && nextCell.j == currentCell.j) {
-        console.log("going right");
+      if (nextCell.i == currentCell.i && nextCell.j == currentCell.j + 1) {
+        // console.log("going right");
         currentCell.wallRight = 0;
         nextCell.wallLeft = 0;
-      } else if (
-        nextCell.i == currentCell.i - 1 &&
-        nextCell.j == currentCell.j
-      ) {
-        console.log("going left");
-        currentCell.wallLeft = 0;
-        nextCell.wallRight = 0;
-      } else if (
-        nextCell.i == currentCell.i &&
-        nextCell.j == currentCell.j + 1
-      ) {
-        console.log("going up");
-        currentCell.wallUp = 0;
-        nextCell.wallDown = 0;
       } else if (
         nextCell.i == currentCell.i &&
         nextCell.j == currentCell.j - 1
       ) {
-        console.log("going down");
+        // console.log("going left");
+        currentCell.wallLeft = 0;
+        nextCell.wallRight = 0;
+      } else if (
+        nextCell.i == currentCell.i + 1 &&
+        nextCell.j == currentCell.j
+      ) {
+        // console.log("going up");
+        currentCell.wallUp = 0;
+        nextCell.wallDown = 0;
+      } else if (
+        nextCell.i == currentCell.i - 1 &&
+        nextCell.j == currentCell.j
+      ) {
+        // console.log("going down");
         currentCell.wallDown = 0;
         nextCell.wallUp = 0;
       }
-      cells[nextCell.i][nextCell.j].visited = true;
+      nextCell.visited = true;
+      cells[currentCell.i][currentCell.j] = currentCell;
+      cells[nextCell.i][nextCell.j] = nextCell;
       cellStack.push(nextCell);
       currentCell = nextCell;
     } else {
@@ -95,52 +155,12 @@ const mazeGenerator = (level) => {
         } else {
           // All done
           generating = false;
+          constructWalls(cells);
           break;
         }
       }
     }
   }
-
-  // // maze wall dimensions, x=length, y=thickness, z=height
-  // const wallDimensions = { x: 5, y: 1, z: 3 };
-  // const wallTexture = new THREE.TextureLoader().load(wallTextureImg);
-  // const mazeCellArray = [];
-  // for (let i = 0; i <= mazeSize / 5; i++) {
-  //   for (let j = 0; j <= mazeSize / 5; j++) {
-  //     const wallGeometry = new THREE.BoxGeometry(
-  //       wallDimensions.x,
-  //       wallDimensions.y,
-  //       wallDimensions.z
-  //     );
-  //     const wallMaterial = new THREE.MeshStandardMaterial({
-  //       map: wallTexture,
-  //     });
-  //     const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-  //     wall.position.set(i * 5 + 2.5, j * 5, 1.5);
-  //     wall.castShadow = true;
-  //     wall.receiveShadow = true
-  //     mazeCompleted.add(wall);
-  //   }
-  // }
-  // for (let i = 0; i <= mazeSize / 5; i++) {
-  //   for (let j = 0; j <= mazeSize / 5; j++) {
-  //     const wallGeometry = new THREE.BoxGeometry(
-  //       wallDimensions.x,
-  //       wallDimensions.y,
-  //       wallDimensions.z
-  //     );
-  //     const wallMaterial = new THREE.MeshStandardMaterial({
-  //       map: wallTexture,
-  //     });
-  //     const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-  //     wall.rotation.z = 1.5708
-  //     wall.position.set(j * 5, i * 5 +2.5, 1.5);
-  //     wall.castShadow = true;
-  //     wall.receiveShadow = true
-  //     mazeCompleted.add(wall);
-  //   }
-  // }
-  // mazeCompleted.position.set(-mazeSize/2, -mazeSize/2, 0)
 };
 
 export default mazeGenerator;

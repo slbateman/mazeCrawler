@@ -37,8 +37,8 @@ const mazeGenerator = (level) => {
       };
     }
   }
+  cells[0][0].visited = true;
   let currentCell = cells[0][0];
-  currentCell.visited = true;
   const cellStack = [currentCell];
 
   const findNeighbors = (cell) => {
@@ -47,58 +47,59 @@ const mazeGenerator = (level) => {
     if (cell.i - 1 >= 0) result.push(cells[cell.i - 1][cell.j]);
     if (cell.j + 1 < mazeSize) result.push(cells[cell.i][cell.j + 1]);
     if (cell.j - 1 >= 0) result.push(cells[cell.i][cell.j - 1]);
-    result = result.filter((e) => !x.visited);
+    result = result.filter((e) => !e.visited);
     return result;
   };
 
   let generating = true;
-  // while (generating) {
-  //   let neighbors = findNeighbors(currentCell);
-  //   if (neighbors.length > 0) {
-  //     let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
-  //     if (nextCell.i == currentCell.i + 1 && nextCell.j == currentCell.j) {
-  //       console.log("going right");
-  //       currentCell.wallRight = 0;
-  //       nextCell.wallLeft = 0
-  //     } else if (
-  //       nextCell.i == currentCell.i - 1 &&
-  //       nextCell.j == currentCell.j
-  //     ) {
-  //       console.log("going left");
-  //       currentCell.wallLeft = 0;
-  //       nextCell.wallRight = 0
-  //     } else if (
-  //       nextCell.i == currentCell.i &&
-  //       nextCell.j == currentCell.j + 1
-  //     ) {
-  //       console.log("going up");
-  //       currentCell.wallUp = 0;
-  //       nextCell.wallDown = 0
-  //     } else if (
-  //       nextCell.i == currentCell.i &&
-  //       nextCell.j == currentCell.j - 1
-  //     ) {
-  //       console.log("going down");
-  //       currentCell.wallDown = 0;
-  //       nextCell.wallUp = 0
-  //     }
-  //     cellStack.push(nextCell);
-  //     currentCell = nextCell;
-  //     console.log(cellStack);
-  //   } else {
-  //     while (neighbors.length === 0) {
-  //     if (cellStack.length > 0) {
-  //       cellStack.pop();
-  //       currentCell = cellStack[cellStack.length - 1];
-  //       neighbors = findNeighbors(currentCell);
-  //     } else {
-  //       // All done
-  //     generating = false;
-  //       break;
-  //     }
-  //     }
-  //   }
-  // }
+  while (generating) {
+    // for (let x = 0; x<mazeSize*mazeSize; x++){
+    let neighbors = findNeighbors(currentCell);
+    if (neighbors.length > 0) {
+      let nextCell = neighbors[Math.floor(Math.random() * neighbors.length)];
+      if (nextCell.i == currentCell.i + 1 && nextCell.j == currentCell.j) {
+        console.log("going right");
+        currentCell.wallRight = 0;
+        nextCell.wallLeft = 0;
+      } else if (
+        nextCell.i == currentCell.i - 1 &&
+        nextCell.j == currentCell.j
+      ) {
+        console.log("going left");
+        currentCell.wallLeft = 0;
+        nextCell.wallRight = 0;
+      } else if (
+        nextCell.i == currentCell.i &&
+        nextCell.j == currentCell.j + 1
+      ) {
+        console.log("going up");
+        currentCell.wallUp = 0;
+        nextCell.wallDown = 0;
+      } else if (
+        nextCell.i == currentCell.i &&
+        nextCell.j == currentCell.j - 1
+      ) {
+        console.log("going down");
+        currentCell.wallDown = 0;
+        nextCell.wallUp = 0;
+      }
+      cells[nextCell.i][nextCell.j].visited = true;
+      cellStack.push(nextCell);
+      currentCell = nextCell;
+    } else {
+      while (neighbors.length === 0) {
+        if (cellStack.length > 1) {
+          cellStack.pop();
+          currentCell = cellStack[cellStack.length - 1];
+          neighbors = findNeighbors(currentCell);
+        } else {
+          // All done
+          generating = false;
+          break;
+        }
+      }
+    }
+  }
 
   // // maze wall dimensions, x=length, y=thickness, z=height
   // const wallDimensions = { x: 5, y: 1, z: 3 };

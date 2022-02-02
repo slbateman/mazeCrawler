@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
-const pointLight = new THREE.PointLight(0xffffff, .5, 20);
+const pointLight = new THREE.PointLight(0xffffff, 2, 9.5);
 
-pointLight.position.set(0, 0, 3);
+pointLight.position.set(0, 0, 1);
 pointLight.castShadow = true; // default false
 
 //Set up shadow properties for the light

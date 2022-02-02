@@ -38,14 +38,15 @@ const mazeGenerator = (level) => {
       const pillar = new THREE.Mesh(pillarGeometry, wallMaterial);
       pillar.position.set(j*5, i*5, 1.5)
       pillar.rotation.x = 1.5708
+      pillar.receiveShadow = true;
       mazeCompleted.add(pillar)
     }
   }
 
-  const constructWalls = (finishedCells) => {
+  const constructWalls = () => {
     for (let i = 0; i < mazeSize; i++) {
       for (let j = 0; j < mazeSize; j++) {
-        if (finishedCells[i][j].wallRight === 1) {
+        if (cells[i][j].wallRight === 1) {
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.rotation.z = 1.5708;
           wall.position.set(j * 5 + 5, i * 5 + 2.5, 1.5);
@@ -53,7 +54,7 @@ const mazeGenerator = (level) => {
           wall.receiveShadow = true;
           mazeCompleted.add(wall);
         }
-        if (finishedCells[i][j].wallLeft === 1) {
+        if (cells[i][j].wallLeft === 1) {
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.rotation.z = 1.5708;
           wall.position.set(j * 5, i * 5 + 2.5, 1.5);
@@ -61,14 +62,14 @@ const mazeGenerator = (level) => {
           wall.receiveShadow = true;
           mazeCompleted.add(wall);
         }
-        if (finishedCells[i][j].wallDown === 1) {
+        if (cells[i][j].wallDown === 1) {
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.position.set(j * 5 + 2.5, i * 5, 1.5);
           wall.castShadow = true;
           wall.receiveShadow = true;
           mazeCompleted.add(wall);
         }
-        if (finishedCells[i][j].wallUp === 1) {
+        if (cells[i][j].wallUp === 1) {
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.position.set(j * 5 + 2.5, i * 5 + 5, 1.5);
           wall.castShadow = true;
@@ -155,7 +156,7 @@ const mazeGenerator = (level) => {
         } else {
           // All done
           generating = false;
-          constructWalls(cells);
+          constructWalls();
           break;
         }
       }

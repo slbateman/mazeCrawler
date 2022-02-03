@@ -9,11 +9,11 @@ import playerOmniLight from "./lights/playerOmniLight";
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
-  const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 1000);
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
   camera.position.set(0, -2, 10);
   camera.lookAt(player.position);
 
-  const ambientLight = new THREE.AmbientLight(0x404040, 0.2);
+  const ambientLight = new THREE.AmbientLight(0x404040, 1);
 
   const renderer = new Renderer({ gl });
   renderer.setSize(width, height);
@@ -23,7 +23,6 @@ const createRender = async (gl) => {
 
   const playerSet = new THREE.Group();
   player.position.set(0, 0, 1);
-  console.log(player);
   topDownSpotlight.target = playerSet;
   playerSet.add(player);
   playerSet.add(topDownSpotlight);
@@ -33,12 +32,12 @@ const createRender = async (gl) => {
   scene.add(playerSet);
   scene.add(mazeCompleted);
   scene.add(pathLights);
-  scene.add(ambientLight);
+  // scene.add(ambientLight);
 
-  // const zoomControls = new OrbitControls(camera, document.body);
-  // zoomControls.enablePan = false;
-  // zoomControls.enableRotate = false;
-  // zoomControls.target = playerSet.position;
+  const zoomControls = new OrbitControls(camera, document.body);
+  zoomControls.enablePan = false;
+  zoomControls.enableRotate = true;
+  zoomControls.target = playerSet.position;
 
   let keyCode = null;
   let direction = "none";
@@ -83,6 +82,7 @@ const createRender = async (gl) => {
     downRaycaster.set(playerSet.position, down);
     leftRaycaster.set(playerSet.position, left);
     rightRaycaster.set(playerSet.position, right);
+    raycasterLocation.set(playerSet.position, location);
   };
 
   const up = new THREE.Vector3(0, 1, 0);
@@ -153,12 +153,29 @@ const createRender = async (gl) => {
     }
   };
 
-  let requestID;
+  const location = new THREE.Vector3(0, 0, 1);
+  const raycasterLocation = new THREE.Raycaster();
+  raycasterLocation.set(playerSet.position, location);
+  raycasterLocation.far = 2;
+
+  const locationIntersects = () => {
+    const intersects = raycasterLocation.intersectObjects(
+      pathLights.children,
+      true
+    );
+    if (intersects.length > 0) {
+      for (let i = 0; i < intersects.length; i++) {
+        intersects[i].object.visible = true;
+      }
+    }
+  };
+
   const render = () => {
-    requestID = requestAnimationFrame(render);
+    requestAnimationFrame(render);
     onMove();
     wallIntersects();
-    // zoomControls.update();
+    locationIntersects();
+    zoomControls.update();
     renderer.render(scene, camera);
     gl.endFrameEXP();
   };

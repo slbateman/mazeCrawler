@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-const spotLight = new THREE.SpotLight(0xffffff, 1, 40, .055, .1);
-spotLight.position.set(0, 0, 20);
+const spotLight = new THREE.SpotLight(0xffffff, 1, 19, .055, .1, .1);
+spotLight.position.set(0, -2, 20);
 
 spotLight.castShadow = true;
 

@@ -3,6 +3,7 @@ import groundTextureImg from "../../assets/groundTexture.jpeg";
 import wallTextureImg from "../../assets/wallTexture.jpeg";
 
 export const mazeCompleted = new THREE.Group();
+export const pathLights = new THREE.Group()
 
 const mazeGenerator = (level) => {
   //maze size
@@ -38,9 +39,10 @@ const mazeGenerator = (level) => {
   const pillarGeometry = new THREE.CylinderGeometry(0.75, 0.75, 3);
 
   for (let i = 0; i <= mazeSize; i++) {
-    for (let j = 0; j <= mazeSize; j++) {const wallMaterial = new THREE.MeshStandardMaterial({
-      map: wallTexture,
-    });
+    for (let j = 0; j <= mazeSize; j++) {
+      const wallMaterial = new THREE.MeshStandardMaterial({
+        map: wallTexture,
+      });
       const pillar = new THREE.Mesh(pillarGeometry, wallMaterial);
       pillar.position.set(j * 5, i * 5, 1.5);
       pillar.rotation.x = 1.5708;
@@ -48,6 +50,21 @@ const mazeGenerator = (level) => {
       mazeCompleted.add(pillar);
     }
   }
+
+  for (let i = 0; i < mazeSize; i++) {
+    for (let j = 0; j < mazeSize; j++) {
+      const sphereGeometry = new THREE.SphereGeometry(.25);
+      const sphereMaterial = new THREE.MeshStandardMaterial({
+        color: 0xff0000
+      });
+      const pathLight = new THREE.Mesh(sphereGeometry, sphereMaterial)
+      pathLight.position.set(j * 5 + 2.5, i * 5 + 2.5, 1);
+      pathLight.receiveShadow = true;
+      pathLight.visible = false
+      pathLights.add(pathLight);
+    }
+  }
+  pathLights.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0);
 
   const constructWalls = () => {
     for (let i = 0; i < mazeSize; i++) {

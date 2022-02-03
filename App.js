@@ -6,7 +6,7 @@ import createRender from "./elements/render";
 import mazeGenerator from "./elements/objects/maze";
 
 export default function App() {
-  mazeGenerator(1);
+  mazeGenerator(5);
 
   return (
     <View style={{ flex: 1 }}>

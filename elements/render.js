@@ -2,14 +2,14 @@ import * as THREE from "three";
 import { Renderer } from "expo-three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import player from "./objects/player";
-import { mazeCompleted, pathLights } from "./objects/maze";
+import { mazeCompleted, pathLights, levelComplete } from "./objects/maze";
 import topDownSpotlight from "./lights/topDownSpotlight";
 import playerOmniLight from "./lights/playerOmniLight";
 
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
-  const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 2000);
   camera.position.set(0, -2, 10);
   camera.lookAt(player.position);
 
@@ -32,6 +32,7 @@ const createRender = async (gl) => {
   scene.add(playerSet);
   scene.add(mazeCompleted);
   scene.add(pathLights);
+  scene.add(levelComplete)
   // scene.add(ambientLight);
 
   const zoomControls = new OrbitControls(camera, document.body);
@@ -170,11 +171,21 @@ const createRender = async (gl) => {
     }
   };
 
+  const levelCompleteIntersects = () => {
+    const intersects = raycasterLocation.intersectObjects(levelComplete.children);
+    if (intersects.length > 0) {
+      for (let i = 0; i < intersects.length; i++) {
+        intersects[i].object.visible = false;
+      }
+    }
+  };
+
   const render = () => {
     requestAnimationFrame(render);
     onMove();
     wallIntersects();
     locationIntersects();
+    levelCompleteIntersects();
     zoomControls.update();
     renderer.render(scene, camera);
     gl.endFrameEXP();

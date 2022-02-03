@@ -3,7 +3,8 @@ import groundTextureImg from "../../assets/groundTexture.jpeg";
 import wallTextureImg from "../../assets/wallTexture.jpeg";
 
 export const mazeCompleted = new THREE.Group();
-export const pathLights = new THREE.Group()
+export const pathLights = new THREE.Group();
+export const levelComplete = new THREE.Group();
 
 const mazeGenerator = (level) => {
   //maze size
@@ -53,20 +54,45 @@ const mazeGenerator = (level) => {
 
   for (let i = 0; i < mazeSize; i++) {
     for (let j = 0; j < mazeSize; j++) {
-      const boxGeometry = new THREE.BoxGeometry(5,5,.1);
+      const boxGeometry = new THREE.BoxGeometry(5, 5, 0.1);
       const boxMaterial = new THREE.MeshStandardMaterial({
-        color: 0x00FF00,
+        color: 0x00ff00,
         transparent: true,
-        opacity: .2
+        opacity: 0.2,
       });
-      const pathLight = new THREE.Mesh(boxGeometry, boxMaterial)
-      pathLight.position.set(j * 5 + 2.5, i * 5 + 2.5, .1);
+      const pathLight = new THREE.Mesh(boxGeometry, boxMaterial);
+      pathLight.position.set(j * 5 + 2.5, i * 5 + 2.5, 0);
       pathLight.receiveShadow = true;
-      pathLight.visible = false
+      pathLight.visible = false;
       pathLights.add(pathLight);
     }
   }
-  pathLights.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0);
+  pathLights.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0.1);
+
+  const sphereGeometry = new THREE.SphereGeometry(1.5);
+  const sphereMaterial = new THREE.MeshStandardMaterial({
+    color: 0x0000ff,
+    transparent: true,
+    opacity: 0.8,
+  });
+  const levelFinish = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  levelFinish.castShadow = true
+  const finishLight = new THREE.PointLight(0x0000ff, 1, 6)
+  levelComplete.add(levelFinish)
+  levelComplete.add(finishLight)
+  const corner = Math.floor(Math.random() * 4);
+  if (corner === 0) {
+    levelComplete.position.set((-mazeSize * 5) / 2 + 2.5, (-mazeSize * 5) / 2 + 2.5, 2 );
+  }
+  if (corner === 1) {
+    levelComplete.position.set((mazeSize * 5) / 2 - 2.5, (-mazeSize * 5) / 2 + 2.5, 2 );
+  }
+  if (corner === 2) {
+    levelComplete.position.set((-mazeSize * 5) / 2 + 2.5, (mazeSize * 5) / 2 - 2.5, 2 );
+  }
+  if (corner === 3) {
+    levelComplete.position.set((mazeSize * 5) / 2 - 2.5, (mazeSize * 5) / 2 - 2.5, 2 );
+  }
 
   const constructWalls = () => {
     for (let i = 0; i < mazeSize; i++) {

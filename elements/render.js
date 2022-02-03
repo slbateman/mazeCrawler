@@ -38,55 +38,79 @@ const createRender = async (gl) => {
   zoomControls.enableRotate = true;
   zoomControls.target = playerSet.position;
 
-  document.addEventListener("keydown", onDocumentKeyDown);
-  function onDocumentKeyDown(event) {
-    window.cancelAnimationFrame(requestID);
-    requestID = undefined;
-    const speed = 0.1;
-    const keyCode = event.which;
-    if (keyCode == 38) {
+  let keyCode = null;
+  let direction = "none";
+  let speed = 0.05;
+  let moveUp = true;
+  let moveDown = true;
+  let moveLeft = true;
+  let moveRight = true;
+
+  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("keyup", onKeyUp);
+  function onKeyDown(event) {
+    keyCode = event.which;
+  }
+  function onKeyUp() {
+    keyCode = null;
+    direction = "none";
+  }
+
+  const onMove = () => {
+    if (keyCode == 38 && moveUp) {
+      direction = "up";
       playerSet.position.y += speed;
       camera.position.y += speed;
       raycaster.set(playerSet.position, up);
-      wallIntersects();
-    } else if (keyCode == 40) {
+    }
+    if (keyCode == 40 && moveDown) {
+      direction = "down";
       playerSet.position.y -= speed;
       camera.position.y -= speed;
       raycaster.set(playerSet.position, down);
-      wallIntersects();
-    } else if (keyCode == 37) {
+    }
+    if (keyCode == 37 && moveLeft) {
+      direction = "left";
       playerSet.position.x -= speed;
       camera.position.x -= speed;
       raycaster.set(playerSet.position, left);
-      wallIntersects();
-    } else if (keyCode == 39) {
+    }
+    if (keyCode == 39 && moveRight) {
+      direction = "right";
       playerSet.position.x += speed;
       camera.position.x += speed;
       raycaster.set(playerSet.position, right);
-      wallIntersects();
     }
-    render();
-  }
+  };
 
-  const origin = new THREE.Vector3(0,0,0)
   const left = new THREE.Vector3(-1, 0, 0);
   const right = new THREE.Vector3(1, 0, 0);
   const up = new THREE.Vector3(0, 1, 0);
   const down = new THREE.Vector3(0, -1, 0);
   const raycaster = new THREE.Raycaster();
   raycaster.set(playerSet.position, up);
-  raycaster.far = 1.1
+  raycaster.far = 1.1;
 
   const wallIntersects = () => {
     const intersects = raycaster.intersectObjects(mazeCompleted.children);
-    for (let i = 0; i < intersects.length; i++) {
-      intersects[i].object.material.visible = false
+    if (intersects.length > 0) {
+      if (direction === "up") moveUp = false;
+      if (direction === "down") moveDown = false;
+      if (direction === "left") moveLeft = false;
+      if (direction === "right") moveRight = false;
+    } else {
+      moveLeft = true;
+      moveRight = true;
+      moveUp = true;
+      moveDown = true;
     }
   };
 
   let requestID;
   const render = () => {
     requestID = requestAnimationFrame(render);
+    onMove();
+    wallIntersects();
     zoomControls.update();
     renderer.render(scene, camera);
     gl.endFrameEXP();

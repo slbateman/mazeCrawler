@@ -53,12 +53,14 @@ const mazeGenerator = (level) => {
 
   for (let i = 0; i < mazeSize; i++) {
     for (let j = 0; j < mazeSize; j++) {
-      const sphereGeometry = new THREE.SphereGeometry(.25);
-      const sphereMaterial = new THREE.MeshStandardMaterial({
-        color: 0xff0000
+      const boxGeometry = new THREE.BoxGeometry(5,5,.1);
+      const boxMaterial = new THREE.MeshStandardMaterial({
+        color: 0x00FF00,
+        transparent: true,
+        opacity: .2
       });
-      const pathLight = new THREE.Mesh(sphereGeometry, sphereMaterial)
-      pathLight.position.set(j * 5 + 2.5, i * 5 + 2.5, 1);
+      const pathLight = new THREE.Mesh(boxGeometry, boxMaterial)
+      pathLight.position.set(j * 5 + 2.5, i * 5 + 2.5, .1);
       pathLight.receiveShadow = true;
       pathLight.visible = false
       pathLights.add(pathLight);

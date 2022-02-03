@@ -8,7 +8,14 @@ const mazeGenerator = (level) => {
   //maze size
   const mazeSize = 5 + (level * 2 - 2);
   // generate the main plane of the maze
-  const groundTexture = new THREE.TextureLoader().load(groundTextureImg);
+  const groundTexture = new THREE.TextureLoader().load(
+    groundTextureImg,
+    function (texture) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      // texture.offset.set(0, 0);
+      texture.repeat.set(mazeSize / 2, mazeSize / 2);
+    }
+  );
   const groundGeometry = new THREE.PlaneGeometry(mazeSize * 5, mazeSize * 5);
   const groundMaterial = new THREE.MeshStandardMaterial({
     map: groundTexture,
@@ -27,19 +34,18 @@ const mazeGenerator = (level) => {
     wallDimensions.y,
     wallDimensions.z
   );
-  const wallMaterial = new THREE.MeshStandardMaterial({
-    map: wallTexture,
-  });
 
-  const pillarGeometry = new THREE.CylinderGeometry(.75, .75, 3);
+  const pillarGeometry = new THREE.CylinderGeometry(0.75, 0.75, 3);
 
-  for (let i = 0; i <= mazeSize; i++){
-    for (let j = 0; j <= mazeSize; j++){
+  for (let i = 0; i <= mazeSize; i++) {
+    for (let j = 0; j <= mazeSize; j++) {const wallMaterial = new THREE.MeshStandardMaterial({
+      map: wallTexture,
+    });
       const pillar = new THREE.Mesh(pillarGeometry, wallMaterial);
-      pillar.position.set(j*5, i*5, 1.5)
-      pillar.rotation.x = 1.5708
+      pillar.position.set(j * 5, i * 5, 1.5);
+      pillar.rotation.x = 1.5708;
       pillar.receiveShadow = true;
-      mazeCompleted.add(pillar)
+      mazeCompleted.add(pillar);
     }
   }
 
@@ -47,6 +53,9 @@ const mazeGenerator = (level) => {
     for (let i = 0; i < mazeSize; i++) {
       for (let j = 0; j < mazeSize; j++) {
         if (cells[i][j].wallRight === 1) {
+          const wallMaterial = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+          });
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.rotation.z = 1.5708;
           wall.position.set(j * 5 + 5, i * 5 + 2.5, 1.5);
@@ -55,6 +64,9 @@ const mazeGenerator = (level) => {
           mazeCompleted.add(wall);
         }
         if (cells[i][j].wallLeft === 1) {
+          const wallMaterial = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+          });
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.rotation.z = 1.5708;
           wall.position.set(j * 5, i * 5 + 2.5, 1.5);
@@ -63,6 +75,9 @@ const mazeGenerator = (level) => {
           mazeCompleted.add(wall);
         }
         if (cells[i][j].wallDown === 1) {
+          const wallMaterial = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+          });
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.position.set(j * 5 + 2.5, i * 5, 1.5);
           wall.castShadow = true;
@@ -70,6 +85,9 @@ const mazeGenerator = (level) => {
           mazeCompleted.add(wall);
         }
         if (cells[i][j].wallUp === 1) {
+          const wallMaterial = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+          });
           const wall = new THREE.Mesh(wallGeometry, wallMaterial);
           wall.position.set(j * 5 + 2.5, i * 5 + 5, 1.5);
           wall.castShadow = true;

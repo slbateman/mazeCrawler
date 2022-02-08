@@ -35,10 +35,10 @@ const createRender = async (gl) => {
   scene.add(levelComplete)
   // scene.add(ambientLight);
 
-  const zoomControls = new OrbitControls(camera, document.body);
-  zoomControls.enablePan = false;
-  zoomControls.enableRotate = true;
-  zoomControls.target = playerSet.position;
+  // const zoomControls = new OrbitControls(camera, document.body);
+  // zoomControls.enablePan = false;
+  // zoomControls.enableRotate = true;
+  // zoomControls.target = playerSet.position;
 
   let keyCode = null;
   let direction = "none";
@@ -186,7 +186,7 @@ const createRender = async (gl) => {
     wallIntersects();
     locationIntersects();
     levelCompleteIntersects();
-    zoomControls.update();
+    // zoomControls.update();
     renderer.render(scene, camera);
     gl.endFrameEXP();
   };

@@ -1,16 +1,27 @@
-import * as React from "react";
-import * as THREE from "three";
-import { View } from "react-native";
-import { GLView } from "expo-gl";
-import createRender from "./elements/render";
-import mazeGenerator from "./elements/objects/maze";
+import React, { useState } from 'react';
+import * as Font from 'expo-font';
+import { AppLoading } from 'expo';
+import Navigator from './routes/mainStack';
+
+// const getFonts = () => Font.loadAsync({
+//   'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
+//   'nunito-bold': require('./assets/fonts/Nunito-Bold.ttf'),
+// });
 
 export default function App() {
-  mazeGenerator(1);
+  // const [fontsLoaded, setFontsLoaded] = useState(true);
 
-  return (
-    <View style={{ flex: 1 }}>
-        <GLView style={{ flex: 1 }} onContextCreate={createRender} />
-    </View>
-  );
+  // if (fontsLoaded) {
+    return (
+      <Navigator />
+    );
+  // } else {
+  //   return (
+  //     <AppLoading 
+  //       startAsync={getFonts} 
+  //       onFinish={() => setFontsLoaded(true)} 
+  //     />
+  //   )
+  // }
+
 }

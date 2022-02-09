@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import * as Font from 'expo-font';
-import { AppLoading } from 'expo';
-import Navigator from './routes/mainStack';
+import React, { useState } from "react";
+import * as Font from "expo-font";
+import { AppLoading } from "expo";
+import Navigator from "./routes/mainStack";
+import { Provider } from "react-redux";
+import store from "./state/store";
 
 // const getFonts = () => Font.loadAsync({
 //   'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
@@ -12,16 +14,17 @@ export default function App() {
   // const [fontsLoaded, setFontsLoaded] = useState(true);
 
   // if (fontsLoaded) {
-    return (
+  return (
+    <Provider store={store}>
       <Navigator />
-    );
+    </Provider>
+  );
   // } else {
   //   return (
-  //     <AppLoading 
-  //       startAsync={getFonts} 
-  //       onFinish={() => setFontsLoaded(true)} 
+  //     <AppLoading
+  //       startAsync={getFonts}
+  //       onFinish={() => setFontsLoaded(true)}
   //     />
   //   )
   // }
-
 }

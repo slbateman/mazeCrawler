@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Renderer } from "expo-three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import player from "./objects/player";
 import { mazeCompleted, pathLights, levelComplete } from "./objects/maze";
 import topDownSpotlight from "./lights/topDownSpotlight";

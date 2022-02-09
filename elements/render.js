@@ -9,7 +9,7 @@ import playerOmniLight from "./lights/playerOmniLight";
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
-  const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 2000);
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
   camera.position.set(0, -2, 10);
   camera.lookAt(player.position);
 

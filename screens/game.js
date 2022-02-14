@@ -4,8 +4,13 @@ import { GLView } from "expo-gl";
 import createRender from "../elements/render";
 import mazeGenerator from "../elements/objects/maze";
 import { globalStyles } from "../styles/globalStyles";
+import { useDispatch, useSelector } from "react-redux";
+import { selectLevelComplete } from "../state/userSlice";
 
 export default function game({ navigation }) {
+  const dispatch = useDispatch()
+
+  const levelComplete = useSelector(selectLevelComplete)
   const level = navigation.getParam("level");
   const [levelComplete, setLevelComplete] = useState(false)
   mazeGenerator(level);

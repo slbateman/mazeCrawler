@@ -1,7 +1,16 @@
 import * as api from "../api/userAPI.js";
-import { loadUser, addUser } from "../state/usersSlice.js";
+import { loadUser, addUser, loadAllUsers } from "./userSlice";
 
-export const getUsers = (id) => async (dispatch) => {
+export const getAllUsers = () => async (dispatch) => {
+  try {
+    const { data } = await api.readAllUsers();
+    dispatch(loadAllUsers(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getUser = (id) => async (dispatch) => {
   try {
     const { data } = await api.readUser(id);
     dispatch(loadUser(data));

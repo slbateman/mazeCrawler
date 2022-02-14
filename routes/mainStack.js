@@ -1,12 +1,16 @@
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from 'react-navigation';
-import login from "../screens/login"
+import login from "../screens/login";
+import signUp from '../screens/signUp';
 import levels from '../screens/levels';
 import game from '../screens/game';
 
 const screens = {
   Login: {
     screen: login,
+  },
+  SignUp: {
+    screen: signUp,
   },
   Levels: {
     screen: levels,

@@ -1,20 +1,24 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { View, Text, ImageBackground, Image, ScrollView } from "react-native";
 import { globalStyles } from "../styles/globalStyles";
 import backgroundImage from "../assets/backgroundImage.png";
 import checkIcon from "../assets/checkIcon.png";
 import lockIcon from "../assets/lockIcon.png";
-import { selectUser } from "../state/userSlice";
+import { selectUser, selectLevelComplete, editLevelComplete,  } from "../state/userSlice";
 
 export default function levels({ navigation }) {
+  const dispatch = useDispatch()
+
   const user = useSelector(selectUser)
+  const levelComplete = useSelector(selectLevelComplete);
   const currentLevel = user.currentLevel
   const levels = [];
 
   const scrollRef = useRef();
 
   const pressHandler = (num) => {
+    dispatch(editLevelComplete(false))
     navigation.navigate("Game", { level: num });
   };
 

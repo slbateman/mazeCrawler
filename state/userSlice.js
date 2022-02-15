@@ -64,12 +64,13 @@ export const userSlice = createSlice({
       deleteUser(action.payload._id);
     },
     editLevelComplete: (state, action) => {
+      console.log("userSlice")
       state.levelComplete = action.payload;
     },
   },
 });
 
-export const { loadAllUsers, loadUser, loginUser, addUser, editUser, removeUser } =
+export const { loadAllUsers, loadUser, loginUser, addUser, editUser, removeUser, editLevelComplete, editCurrentLevel} =
   userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;

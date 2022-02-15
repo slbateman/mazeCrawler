@@ -1,9 +1,10 @@
-import { createStackNavigator } from 'react-navigation-stack';
-import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from "react-navigation-stack";
+import { createAppContainer } from "react-navigation";
 import login from "../screens/login";
-import signUp from '../screens/signUp';
-import levels from '../screens/levels';
-import game from '../screens/game';
+import signUp from "../screens/signUp";
+import levels from "../screens/levels";
+import game from "../screens/game";
+import complete from "../screens/complete";
 
 const screens = {
   Login: {
@@ -16,8 +17,11 @@ const screens = {
     screen: levels,
   },
   Game: {
-      screen: game
-  }
+    screen: game,
+  },
+  Complete: {
+    screen: complete,
+  },
 };
 
 // home stack navigator screens
@@ -27,8 +31,8 @@ const MainStack = createStackNavigator(screens, {
     headerStyle: {
       backgroundColor: "#333",
       height: 40,
-    }
-  }
+    },
+  },
 });
 
 export default createAppContainer(MainStack);

@@ -20,11 +20,9 @@ export default function levels({ navigation }) {
 
   useEffect(() => {
     if (localUserInfo.user_id === null) {
-      console.log(user);
       dispatch(getAllUsers());
     } else {
       dispatch(getUser(localUserInfo.user_id));
-      console.log(user);
     }
   }, [localUserInfo]);
 

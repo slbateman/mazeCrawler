@@ -1,15 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, ImageBackground, TextInput, Text } from "react-native";
 import { globalStyles } from "../styles/globalStyles";
 import backgroundImage from "../assets/backgroundImage.png";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginUser,
+  selectAllUsers,
+  selectLocalUserInfo,
+  selectUser,
+} from "../state/userSlice";
+import { getAllUsers, getUser } from "../state/actions";
 
 export default function levels({ navigation }) {
-  const [loggedIn, setLoggedIn] = useState(true);
+  const dispatch = useDispatch();
+
+  const localUserInfo = useSelector(selectLocalUserInfo);
+  const allUsers = useSelector(selectAllUsers);
+  const user = useSelector(selectUser);
+
+  useEffect(() => {
+    if (localUserInfo.user_id === null) {
+      dispatch(getAllUsers());
+    } else {
+      dispatch(getUser(localUserInfo.user_id));
+    }
+  }, [localUserInfo]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const pressHandler = (navLoc) => {
-    navigation.navigate(navLoc);
+  const loginHandler = () => {
+    if (localUserInfo.user_id === null) {
+      let userCheck = allUsers.find((e) => e.email === email);
+      if (userCheck) {
+        if (password === userCheck.password) {
+          dispatch(
+            loginUser({
+              user_id: userCheck._id,
+              loggedIn: true,
+            })
+          );
+          navigation.navigate("Levels");
+        } else alert("password is incorrect");
+      } else alert("there is no account with this email");
+    }
   };
 
   return (
@@ -20,11 +54,14 @@ export default function levels({ navigation }) {
         style={globalStyles.containerCenter}
       >
         <Text style={globalStyles.gameTitleLogin}>Maze Crawler</Text>
-        {loggedIn ? (
+        {localUserInfo.loggedIn ? (
           <View style={globalStyles.containerCenter}>
             <Text
               style={globalStyles.button}
-              onPress={() => pressHandler("Levels")}
+              onPress={() => {
+                console.log(user);
+                navigation.navigate("Levels");
+              }}
             >
               enter
             </Text>
@@ -49,11 +86,14 @@ export default function levels({ navigation }) {
               placeholder="enter password"
               keyboardType="default"
             />
+            <Text style={globalStyles.button} onPress={() => loginHandler()}>
+              login
+            </Text>
             <Text
               style={globalStyles.button}
-              onPress={() => pressHandler("Levels")}
+              onPress={() => navigation.navigate("SignUp")}
             >
-              login
+              sign up
             </Text>
           </View>
         )}

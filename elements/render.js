@@ -5,8 +5,11 @@ import player from "./objects/player";
 import { mazeCompleted, pathLights, levelComplete } from "./objects/maze";
 import topDownSpotlight from "./lights/topDownSpotlight";
 import playerOmniLight from "./lights/playerOmniLight";
+import { editLevelComplete } from "../state/userSlice";
+import store from "../state/store";
 
 const createRender = async (gl) => {
+
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
@@ -32,7 +35,7 @@ const createRender = async (gl) => {
   scene.add(playerSet);
   scene.add(mazeCompleted);
   scene.add(pathLights);
-  scene.add(levelComplete)
+  scene.add(levelComplete);
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -171,17 +174,25 @@ const createRender = async (gl) => {
     }
   };
 
+  let complete = false
   const levelCompleteIntersects = () => {
-    const intersects = raycasterLocation.intersectObjects(levelComplete.children);
-    if (intersects.length > 0) {
+    const intersects = raycasterLocation.intersectObjects(
+      levelComplete.children
+    );
+    if (intersects.length > 0 && !complete) {
       for (let i = 0; i < intersects.length; i++) {
         intersects[i].object.visible = false;
+        // window.cancelAnimationFrame(requestId);
+        // requestId = undefined;
+        store.dispatch(editLevelComplete(true));
+        complete = true
       }
     }
   };
 
+  let requestId;
   const render = () => {
-    requestAnimationFrame(render);
+    requestId = requestAnimationFrame(render);
     onMove();
     wallIntersects();
     locationIntersects();

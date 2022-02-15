@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 import Users from "../models/userModel.js";
 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await Users.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(404).json({ message: error });
+  }
+};
 export const getUser = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id))
@@ -15,7 +23,7 @@ export const getUser = async (req, res) => {
 
 export const postUser = async (req, res) => {
   const user = req.body;
-  const existing = await Users.find({ username: req.body.username });
+  const existing = await Users.find({ email: req.body.email });
   if (existing < 1) {
     const newUser = new Users({
       ...user,

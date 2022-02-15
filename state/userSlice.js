@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateUser, deleteUser } from "../api/userAPI";
 
+let allUsers = [];
 let user = null;
 let localUserInfo = JSON.parse(localStorage.getItem("localUserInfo"));
 let levelComplete = false;
@@ -16,13 +17,17 @@ if (!localUserInfo) {
 export const userSlice = createSlice({
   name: "user",
   initialState: {
+    allUsers,
     user,
     localUserInfo,
     levelComplete,
   },
   reducers: {
+    loadAllUsers: (state, action) => {
+      state.allUsers = action.payload;
+    },
     loadUser: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload[0];
     },
     loginUser: (state, action) => {
       state.localUserInfo = action.payload;
@@ -32,7 +37,7 @@ export const userSlice = createSlice({
       );
     },
     addUser: (state, action) => {
-      state.user.push(action.payload);
+      state.allUsers.push(action.payload);
       state.localUserInfo = {
         user_id: action.payload._id,
         loggedIn: true,
@@ -59,14 +64,16 @@ export const userSlice = createSlice({
       deleteUser(action.payload._id);
     },
     editLevelComplete: (state, action) => {
+      console.log("userSlice")
       state.levelComplete = action.payload;
     },
   },
 });
 
-export const { loadUser, loginUser, addUser, editUser, removeUser } =
+export const { loadAllUsers, loadUser, loginUser, addUser, editUser, removeUser, editLevelComplete, editCurrentLevel} =
   userSlice.actions;
 
+export const selectAllUsers = (state) => state.user.allUsers;
 export const selectUser = (state) => state.user.user;
 export const selectLocalUserInfo = (state) => state.user.localUserInfo;
 export const selectLevelComplete = (state) => state.user.levelComplete;

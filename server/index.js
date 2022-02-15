@@ -11,6 +11,8 @@ app.use(express.json({extended: true}))
 app.use(express.urlencoded({extended: true}))
 app.use(cors())
 
+app.use('/api', router)
+
 mongoose.connect(CONNECTION)
     .then(() => app.listen(PORT, () => console.log(`Server is running on port ${PORT}.`)))
     .catch((err) => console.log(err.message));

@@ -47,12 +47,6 @@ export const userSlice = createSlice({
         JSON.stringify(state.localUserInfo)
       );
     },
-    editCurrentLevel: (state, action) => {
-      state.user.currentLevel = action.payload.currentLevel;
-      updateUser(action.payload._id, {
-        currentLevel: action.payload.currentLevel,
-      });
-    },
     removeUser: (state, action) => {
       state.user = null;
       state.localUserInfo = {
@@ -64,14 +58,26 @@ export const userSlice = createSlice({
       deleteUser(action.payload._id);
     },
     editLevelComplete: (state, action) => {
-      console.log("userSlice")
       state.levelComplete = action.payload;
+    },
+    editCurrentLevel: (state, action) => {
+      state.user.currentLevel = action.payload.currentLevel;
+      updateUser(action.payload._id, {
+        currentLevel: action.payload.currentLevel,
+      });
     },
   },
 });
 
-export const { loadAllUsers, loadUser, loginUser, addUser, editUser, removeUser, editLevelComplete, editCurrentLevel} =
-  userSlice.actions;
+export const {
+  loadAllUsers,
+  loadUser,
+  loginUser,
+  addUser,
+  removeUser,
+  editLevelComplete,
+  editCurrentLevel,
+} = userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;
 export const selectUser = (state) => state.user.user;

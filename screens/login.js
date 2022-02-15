@@ -59,7 +59,6 @@ export default function levels({ navigation }) {
             <Text
               style={globalStyles.button}
               onPress={() => {
-                console.log(user);
                 navigation.navigate("Levels");
               }}
             >

@@ -17,7 +17,7 @@ export default function game({ navigation }) {
   const user = useSelector(selectUser);
   const levelComplete = useSelector(selectLevelComplete);
   const level = navigation.getParam("level");
-  // const [levelComplete, setLevelComplete] = useState(false)
+
   mazeGenerator(level);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function game({ navigation }) {
       );
     }
     if (levelComplete) {
-      navigation.goBack()
+      navigation.goBack();
       navigation.navigate("Complete");
     }
   }, [levelComplete]);
@@ -39,11 +39,7 @@ export default function game({ navigation }) {
     <View style={{ flex: 1 }}>
       <GLView style={{ flex: 1 }} onContextCreate={createRender}>
         <View style={{ zIndex: 9999 }}>
-          {levelComplete ? (
-            <Text style={globalStyles.gameTitleLogin}>You Did It!!</Text>
-          ) : (
-            <Text style={globalStyles.gameTitleLogin}>Good Luck</Text>
-          )}
+          <Text style={globalStyles.gameTitleLogin}>Good Luck</Text>
         </View>
       </GLView>
     </View>

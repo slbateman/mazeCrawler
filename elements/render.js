@@ -9,7 +9,6 @@ import { editLevelComplete } from "../state/userSlice";
 import store from "../state/store";
 
 const createRender = async (gl) => {
-
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
@@ -25,11 +24,11 @@ const createRender = async (gl) => {
   renderer.shadowMap.type = THREE.BasicShadowMap;
 
   const playerSet = new THREE.Group();
-  player.position.set(0, 0, 1);
   topDownSpotlight.target = playerSet;
   playerSet.add(player);
   playerSet.add(topDownSpotlight);
   playerSet.add(playerOmniLight);
+  playerSet.position.set(0, 0, 1);
 
   const scene = new THREE.Scene();
   scene.add(playerSet);
@@ -43,42 +42,46 @@ const createRender = async (gl) => {
   // zoomControls.enableRotate = true;
   // zoomControls.target = playerSet.position;
 
-  let keyCode = null;
-  let direction = "none";
+  let upDirection = false;
+  let downDirection = false;
+  let leftDirection = false;
+  let rightDirection = false;
   let speed = 0.1;
-  let moveUp = true;
-  let moveDown = true;
-  let moveLeft = true;
-  let moveRight = true;
+  let moveUp = false;
+  let moveDown = false;
+  let moveLeft = false;
+  let moveRight = false;
 
   document.addEventListener("keydown", onKeyDown);
   document.addEventListener("keyup", onKeyUp);
+
   function onKeyDown(event) {
-    keyCode = event.which;
+    if (event.which == 38) upDirection = true;
+    if (event.which == 40) downDirection = true;
+    if (event.which == 37) leftDirection = true;
+    if (event.which == 39) rightDirection = true;
   }
-  function onKeyUp() {
-    keyCode = null;
-    direction = "none";
+  function onKeyUp(event) {
+    if (event.which == 38) upDirection = false;
+    if (event.which == 40) downDirection = false;
+    if (event.which == 37) leftDirection = false;
+    if (event.which == 39) rightDirection = false;
   }
 
   const onMove = () => {
-    if (keyCode == 38 && moveUp) {
-      direction = "up";
+    if (upDirection && moveUp) {
       playerSet.position.y += speed;
       camera.position.y += speed;
     }
-    if (keyCode == 40 && moveDown) {
-      direction = "down";
+    if (downDirection && moveDown) {
       playerSet.position.y -= speed;
       camera.position.y -= speed;
     }
-    if (keyCode == 37 && moveLeft) {
-      direction = "left";
+    if (leftDirection && moveLeft) {
       playerSet.position.x -= speed;
       camera.position.x -= speed;
     }
-    if (keyCode == 39 && moveRight) {
-      direction = "right";
+    if (rightDirection && moveRight) {
       playerSet.position.x += speed;
       camera.position.x += speed;
     }
@@ -87,24 +90,28 @@ const createRender = async (gl) => {
     leftRaycaster.set(playerSet.position, left);
     rightRaycaster.set(playerSet.position, right);
     raycasterLocation.set(playerSet.position, location);
+    raycasterCompleteLevel.set(playerSet.position, completeLevel);
   };
 
   const up = new THREE.Vector3(0, 1, 0);
-  const down = new THREE.Vector3(0, -1, 0);
-  const left = new THREE.Vector3(-1, 0, 0);
-  const right = new THREE.Vector3(1, 0, 0);
   const upRaycaster = new THREE.Raycaster();
   upRaycaster.set(playerSet.position, up);
-  upRaycaster.far = 1.1;
+  upRaycaster.far = .8;
+
+  const down = new THREE.Vector3(0, -1, 0);
   const downRaycaster = new THREE.Raycaster();
   downRaycaster.set(playerSet.position, down);
-  downRaycaster.far = 1.1;
+  downRaycaster.far = .8;
+
+  const left = new THREE.Vector3(-1, 0, 0);
   const leftRaycaster = new THREE.Raycaster();
   leftRaycaster.set(playerSet.position, left);
-  leftRaycaster.far = 1.1;
+  leftRaycaster.far = .8;
+
+  const right = new THREE.Vector3(1, 0, 0);
   const rightRaycaster = new THREE.Raycaster();
   rightRaycaster.set(playerSet.position, right);
-  rightRaycaster.far = 1.1;
+  rightRaycaster.far = .8;
 
   const wallIntersects = () => {
     const intersectsUp = upRaycaster.intersectObjects(
@@ -123,22 +130,14 @@ const createRender = async (gl) => {
       mazeCompleted.children,
       true
     );
-    if (
-      intersectsUp.length > 0 ||
-      intersectsDown.length > 0 ||
-      intersectsLeft.length > 0 ||
-      intersectsRight.length > 0
-    ) {
-      if (direction === "up") moveUp = false;
-      if (direction === "down") moveDown = false;
-      if (direction === "left") moveLeft = false;
-      if (direction === "right") moveRight = false;
-    } else {
-      moveLeft = true;
-      moveRight = true;
-      moveUp = true;
-      moveDown = true;
-    }
+    if (intersectsUp.length > 0 && upDirection) moveUp = false;
+    else moveDown = true;
+    if (intersectsDown.length > 0 && downDirection) moveDown = false;
+    else moveUp = true;
+    if (intersectsLeft.length > 0 && leftDirection) moveLeft = false;
+    else moveRight = true;
+    if (intersectsRight.length > 0 && rightDirection) moveRight = false;
+    else moveLeft = true;
     if (intersectsUp.length > 0) {
       playerSet.position.y -= speed;
       camera.position.y -= speed;
@@ -157,26 +156,33 @@ const createRender = async (gl) => {
     }
   };
 
-  const location = new THREE.Vector3(0, 0, 1);
+
+  let complete = false;
+
+  const location = new THREE.Vector3(0, 0, -1);
   const raycasterLocation = new THREE.Raycaster();
   raycasterLocation.set(playerSet.position, location);
-  raycasterLocation.far = 2;
+  raycasterLocation.far = 0.85;
 
   const locationIntersects = () => {
     const intersects = raycasterLocation.intersectObjects(
       pathLights.children,
       true
     );
-    if (intersects.length > 0) {
+    if (intersects.length > 0 && !complete) {
       for (let i = 0; i < intersects.length; i++) {
         intersects[i].object.visible = true;
       }
     }
   };
 
-  let complete = false
+  const completeLevel = new THREE.Vector3(0, 0, 1);
+  const raycasterCompleteLevel = new THREE.Raycaster();
+  raycasterCompleteLevel.set(playerSet.position, completeLevel);
+  raycasterCompleteLevel.far = 3;
+
   const levelCompleteIntersects = () => {
-    const intersects = raycasterLocation.intersectObjects(
+    const intersects = raycasterCompleteLevel.intersectObjects(
       levelComplete.children
     );
     if (intersects.length > 0 && !complete) {
@@ -184,15 +190,15 @@ const createRender = async (gl) => {
         intersects[i].object.visible = false;
         // window.cancelAnimationFrame(requestId);
         // requestId = undefined;
-        store.dispatch(editLevelComplete(true));
-        complete = true
       }
+      store.dispatch(editLevelComplete(true));
+        complete = true;
     }
   };
 
-  let requestId;
+  // let requestId
   const render = () => {
-    requestId = requestAnimationFrame(render);
+    requestAnimationFrame(render);
     onMove();
     wallIntersects();
     locationIntersects();

@@ -9,16 +9,15 @@ export const levelComplete = new THREE.Group();
 const mazeGenerator = (level) => {
 
   // reset maze to blank before each mazeGenerator call
-  for (var i = mazeCompleted.children.length - 1; i >= 0; i--) {
+  for (let i = mazeCompleted.children.length - 1; i >= 0; i--) {
     mazeCompleted.remove(mazeCompleted.children[i]);
   }
-  for (var i = pathLights.children.length - 1; i >= 0; i--) {
+  for (let i = pathLights.children.length - 1; i >= 0; i--) {
     pathLights.remove(pathLights.children[i]);
   }
-  for (var i = levelComplete.children.length - 1; i >= 0; i--) {
+  for (let i = levelComplete.children.length - 1; i >= 0; i--) {
     levelComplete.remove(levelComplete.children[i]);
   }
-
 
   //maze size
   const mazeSize = 5 + (level * 2 - 2);

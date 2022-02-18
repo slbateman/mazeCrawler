@@ -2652,7 +2652,7 @@
   "resolved" "https://registry.npmjs.org/expo-asset-utils/-/expo-asset-utils-3.0.0.tgz"
   "version" "3.0.0"
 
-"expo-asset@*", "expo-asset@~8.4.6":
+"expo-asset@*", "expo-asset@^8.4.6", "expo-asset@~8.4.6":
   "integrity" "sha512-Kpzcmmf1lceHnZkAdJOvq7l7SU/hCL59vAj2xUZS66U6lFkUf7LNEA/NzILA56loCd4cka5ShYlWs+BMchyFDQ=="
   "resolved" "https://registry.npmjs.org/expo-asset/-/expo-asset-8.4.6.tgz"
   "version" "8.4.6"

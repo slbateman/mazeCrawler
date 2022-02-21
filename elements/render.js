@@ -56,16 +56,16 @@ const createRender = async (gl) => {
   document.addEventListener("keyup", onKeyUp);
 
   function onKeyDown(event) {
-    if (event.which == 38) upDirection = true;
-    if (event.which == 40) downDirection = true;
-    if (event.which == 37) leftDirection = true;
-    if (event.which == 39) rightDirection = true;
+    if (event.which == 38 || event.which == 87) upDirection = true;
+    if (event.which == 40 || event.which == 83) downDirection = true;
+    if (event.which == 37 || event.which == 65) leftDirection = true;
+    if (event.which == 39 || event.which == 68) rightDirection = true;
   }
   function onKeyUp(event) {
-    if (event.which == 38) upDirection = false;
-    if (event.which == 40) downDirection = false;
-    if (event.which == 37) leftDirection = false;
-    if (event.which == 39) rightDirection = false;
+    if (event.which == 38 || event.which == 87) upDirection = false;
+    if (event.which == 40 || event.which == 83) downDirection = false;
+    if (event.which == 37 || event.which == 65) leftDirection = false;
+    if (event.which == 39 || event.which == 68) rightDirection = false;
   }
 
   const onMove = () => {

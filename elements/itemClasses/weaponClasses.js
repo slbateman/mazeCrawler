@@ -56,12 +56,12 @@ class Weapon {
     },
   };
 
-  constructor(type) {
+  constructor(type, playerLevel) {
     this.itemName = options[type].name;
     this.type = options[type].type;
     this.color = options[type].color;
     this.size = options[type].size;
-    this.damage = options[type].damage;
+    this.damage = options[type].damage + playerLevel;
     this.charge = options[type].charge;
   }
 }

@@ -2,21 +2,21 @@ class HpBooster {
   options = {
     low: {
       name: "",
-      type: "HpBooster",
+      type: "hpBooster",
       color: "green",
       size: 0.1,
       hpBoost: 10,
     },
     med: {
       name: "",
-      type: "HpBooster",
+      type: "hpBooster",
       color: "green",
       size: 0.15,
       hpBoost: 25,
     },
     high: {
       name: "",
-      type: "HpBooster",
+      type: "hpBooster",
       color: "green",
       size: 0.2,
       hpBoost: 50,

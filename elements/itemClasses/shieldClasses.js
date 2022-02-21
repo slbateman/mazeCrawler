@@ -2,7 +2,7 @@ class Shield {
   options = {
     low: {
       name: "",
-      type: "HpBooster",
+      type: "shield",
       color: "green",
       size: 0.85,
       shieldPoints: 10,
@@ -10,7 +10,7 @@ class Shield {
     },
     med: {
       name: "",
-      type: "HpBooster",
+      type: "shield",
       color: "green",
       size: 1,
       shieldPoints: 25,
@@ -18,7 +18,7 @@ class Shield {
     },
     high: {
       name: "",
-      type: "HpBooster",
+      type: "shield",
       color: "green",
       size: 1.15,
       shieldPoints: 50,

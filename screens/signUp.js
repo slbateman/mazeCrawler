@@ -21,7 +21,7 @@ export default function signUp({ navigation }) {
 
   useEffect(() => {
     if (localUserInfo.loggedIn) {
-      navigation.navigate("Levels");
+      navigation.goBack();
     }
   }, [localUserInfo]);
 

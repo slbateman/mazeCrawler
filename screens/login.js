@@ -16,7 +16,7 @@ export default function levels({ navigation }) {
 
   const localUserInfo = useSelector(selectLocalUserInfo);
   const allUsers = useSelector(selectAllUsers);
-  const user = useSelector(selectUser);
+  let user = useSelector(selectUser);
 
   useEffect(() => {
     if (localUserInfo.user_id === null) {
@@ -24,6 +24,7 @@ export default function levels({ navigation }) {
     } else {
       dispatch(getUser(localUserInfo.user_id));
     }
+    // let user = useSelector(selectUser);
   }, [localUserInfo]);
 
   const [email, setEmail] = useState("");
@@ -40,10 +41,19 @@ export default function levels({ navigation }) {
               loggedIn: true,
             })
           );
-          navigation.navigate("Levels");
+          // navigation.navigate("Levels");
         } else alert("password is incorrect");
       } else alert("there is no account with this email");
     }
+  };
+
+  const logoutHandler = () => {
+    dispatch(
+      loginUser({
+        user_id: null,
+        loggedIn: false,
+      })
+    );
   };
 
   return (
@@ -63,6 +73,14 @@ export default function levels({ navigation }) {
               }}
             >
               enter
+            </Text>
+            <Text
+              style={globalStyles.button}
+              onPress={() => {
+                logoutHandler();
+              }}
+            >
+              logout
             </Text>
           </View>
         ) : (

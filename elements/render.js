@@ -2,7 +2,12 @@ import * as THREE from "three";
 import { Renderer } from "expo-three";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import player from "./objects/player";
-import { mazeCompleted, pathLights, levelComplete, shieldItems } from "./objects/maze";
+import { shieldItems } from "./objects/shieldItems";
+import { levelComplete } from "./objects/levelComplete";
+import { pathLights } from "./objects/pathLights";
+import { pillars } from "./objects/pillars";
+import { walls } from "./objects/walls";
+import { ground } from "./objects/ground";
 import topDownSpotlight from "./lights/topDownSpotlight";
 import playerOmniLight from "./lights/playerOmniLight";
 import { editLevelComplete } from "../state/userSlice";
@@ -32,10 +37,14 @@ const createRender = async (gl) => {
 
   const scene = new THREE.Scene();
   scene.add(playerSet);
-  scene.add(mazeCompleted);
   scene.add(pathLights);
   scene.add(levelComplete);
   scene.add(shieldItems)
+  scene.add(ground)
+  const mazeCompleted = new THREE.Group()
+  mazeCompleted.add(pillars)
+  mazeCompleted.add(walls)
+  scene.add(mazeCompleted);
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);

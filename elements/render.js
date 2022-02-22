@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Renderer } from "expo-three";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import player from "./objects/player";
-import { mazeCompleted, pathLights, levelComplete } from "./objects/maze";
+import { mazeCompleted, pathLights, levelComplete, shieldItems } from "./objects/maze";
 import topDownSpotlight from "./lights/topDownSpotlight";
 import playerOmniLight from "./lights/playerOmniLight";
 import { editLevelComplete } from "../state/userSlice";
@@ -35,6 +35,7 @@ const createRender = async (gl) => {
   scene.add(mazeCompleted);
   scene.add(pathLights);
   scene.add(levelComplete);
+  scene.add(shieldItems)
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -186,11 +187,7 @@ const createRender = async (gl) => {
       levelComplete.children
     );
     if (intersects.length > 0 && !complete) {
-      for (let i = 0; i < intersects.length; i++) {
-        intersects[i].object.visible = false;
-        // window.cancelAnimationFrame(requestId);
-        // requestId = undefined;
-      }
+      scene.remove(levelComplete)
       store.dispatch(editLevelComplete(true));
         complete = true;
     }

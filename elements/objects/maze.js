@@ -1,12 +1,17 @@
 import * as THREE from "three";
 import groundTextureImg from "../../assets/groundTexture.jpeg";
 import wallTextureImg from "../../assets/wallTexture.jpeg";
+import store from "../../state/store";
+import Shield from "../itemClasses/shieldClasses";
 
 export const mazeCompleted = new THREE.Group();
 export const pathLights = new THREE.Group();
 export const levelComplete = new THREE.Group();
+export const shieldItems = new THREE.Group();
 
 const mazeGenerator = (level) => {
+  const state = store.getState();
+  const playerLevel = state.user.user.playerLevel;
 
   // reset maze to blank before each mazeGenerator call
   for (let i = mazeCompleted.children.length - 1; i >= 0; i--) {
@@ -17,6 +22,9 @@ const mazeGenerator = (level) => {
   }
   for (let i = levelComplete.children.length - 1; i >= 0; i--) {
     levelComplete.remove(levelComplete.children[i]);
+  }
+  for (let i = shieldItems.children.length - 1; i >= 0; i--) {
+    shieldItems.remove(shieldItems.children[i]);
   }
 
   //maze size
@@ -49,8 +57,8 @@ const mazeGenerator = (level) => {
     wallDimensions.z
   );
 
+  // creating the pillars the stand at each wall joint
   const pillarGeometry = new THREE.CylinderGeometry(0.75, 0.75, 3);
-
   for (let i = 0; i <= mazeSize; i++) {
     for (let j = 0; j <= mazeSize; j++) {
       const wallMaterial = new THREE.MeshStandardMaterial({
@@ -64,6 +72,7 @@ const mazeGenerator = (level) => {
     }
   }
 
+  // creating the green maze path elements for the full maze
   for (let i = 0; i < mazeSize; i++) {
     for (let j = 0; j < mazeSize; j++) {
       const boxGeometry = new THREE.BoxGeometry(5, 5, 0.1);
@@ -81,18 +90,19 @@ const mazeGenerator = (level) => {
   }
   pathLights.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0.1);
 
+  // creating and placing the level complete sphere
   const sphereGeometry = new THREE.SphereGeometry(1.75);
   const sphereMaterial = new THREE.MeshStandardMaterial({
     color: 0x0000ff,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.5,
   });
   const levelFinish = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  // levelFinish.castShadow = true;
   const finishLight = new THREE.PointLight(0x0000ff, 1, 5);
   finishLight.castShadow = true;
   levelComplete.add(levelFinish);
   levelComplete.add(finishLight);
+  // deciding which corner the sphere should appear
   const corner = Math.floor(Math.random() * 4);
   if (corner === 0) {
     levelComplete.position.set(
@@ -122,6 +132,56 @@ const mazeGenerator = (level) => {
       2
     );
   }
+
+  // random generation of shield items
+  for (let i = 0; i < level; i++) {
+    const opts = [
+      {
+        name: "",
+        type: "shield",
+        color: "green",
+        size: 0.85,
+        shieldPoints: 10,
+        multiplier: 1,
+      },
+      {
+        name: "",
+        type: "shield",
+        color: "blue",
+        size: 1,
+        shieldPoints: 25,
+        multiplier: 2,
+      },
+      {
+        name: "",
+        type: "shield",
+        color: "white",
+        size: 1.15,
+        shieldPoints: 50,
+        multiplier: 3,
+      },
+    ];
+    let max;
+    if (level >= 0 && level < 5) max = 1;
+    if (level >= 5 && level < 10) max = 2;
+    if (level >= 10) max = 3;
+    let random = Math.floor(Math.random() * max);
+    const shield = new Shield(opts[random], playerLevel);
+    const shieldGeometry = new THREE.SphereGeometry(shield.size / 2);
+    const shieldMaterial = new THREE.MeshStandardMaterial({
+      color: shield.color,
+      transparent: true,
+      opacity: 0.75,
+    });
+    const shieldItem = new THREE.Mesh(shieldGeometry, shieldMaterial);
+    shieldItem.position.set(
+      Math.floor(Math.random() * mazeSize) * 5 + 2.5,
+      Math.floor(Math.random() * mazeSize) * 5 + 2.5,
+      shield.size / 2
+    );
+    shieldItems.add(shieldItem);
+  }
+  shieldItems.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0);
 
   const constructWalls = () => {
     for (let i = 0; i < mazeSize; i++) {

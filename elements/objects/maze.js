@@ -1,12 +1,10 @@
-import * as THREE from "three";
-import groundTextureImg from "../../assets/groundTexture.jpeg";
 import store from "../../state/store";
-import { shieldItemsGenerator } from "./shieldItems";
-import { levelCompleteGenerator } from "./levelComplete";
-import { pathLightsGenerator } from "./pathLights";
-import { pillarsGenerator } from "./pillars";
-import { wallsGenerator } from "./walls";
 import { groundGenerator } from "./ground";
+import { wallsGenerator } from "./walls";
+import { pillarsGenerator } from "./pillars";
+import { pathLightsGenerator } from "./pathLights";
+import { levelCompleteGenerator } from "./levelComplete";
+import { shieldItemsGenerator } from "./shieldItems";
 
 const mazeGenerator = (level) => {
   const state = store.getState();

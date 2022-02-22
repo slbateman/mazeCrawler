@@ -2,14 +2,14 @@ import * as THREE from "three";
 import { Renderer } from "expo-three";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import player from "./objects/player";
-import { shieldItems } from "./objects/shieldItems";
-import { levelComplete } from "./objects/levelComplete";
-import { pathLights } from "./objects/pathLights";
-import { pillars } from "./objects/pillars";
-import { walls } from "./objects/walls";
-import { ground } from "./objects/ground";
 import topDownSpotlight from "./lights/topDownSpotlight";
 import playerOmniLight from "./lights/playerOmniLight";
+import { ground } from "./objects/ground";
+import { walls } from "./objects/walls";
+import { pillars } from "./objects/pillars";
+import { pathLights } from "./objects/pathLights";
+import { levelComplete } from "./objects/levelComplete";
+import { shieldItems } from "./objects/shieldItems";
 import { editLevelComplete } from "../state/userSlice";
 import store from "../state/store";
 
@@ -29,22 +29,23 @@ const createRender = async (gl) => {
   renderer.shadowMap.type = THREE.BasicShadowMap;
 
   const playerSet = new THREE.Group();
-  topDownSpotlight.target = playerSet;
+  topDownSpotlight.target = player;
   playerSet.add(player);
   playerSet.add(topDownSpotlight);
   playerSet.add(playerOmniLight);
   playerSet.position.set(0, 0, 1);
 
+  const mazeCompleted = new THREE.Group();
+  mazeCompleted.add(pillars);
+  mazeCompleted.add(walls);
+
   const scene = new THREE.Scene();
   scene.add(playerSet);
+  scene.add(ground);
+  scene.add(mazeCompleted);
   scene.add(pathLights);
   scene.add(levelComplete);
-  scene.add(shieldItems)
-  scene.add(ground)
-  const mazeCompleted = new THREE.Group()
-  mazeCompleted.add(pillars)
-  mazeCompleted.add(walls)
-  scene.add(mazeCompleted);
+  scene.add(shieldItems);
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -52,46 +53,51 @@ const createRender = async (gl) => {
   // zoomControls.enableRotate = true;
   // zoomControls.target = playerSet.position;
 
-  let upDirection = false;
-  let downDirection = false;
-  let leftDirection = false;
-  let rightDirection = false;
+  const direction = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+  };
+  const move = {
+    up: true,
+    down: true,
+    left: true,
+    right: true,
+  };
+
   let speed = 0.1;
-  let moveUp = false;
-  let moveDown = false;
-  let moveLeft = false;
-  let moveRight = false;
 
   document.addEventListener("keydown", onKeyDown);
   document.addEventListener("keyup", onKeyUp);
 
-  function onKeyDown(event) {
-    if (event.which == 38 || event.which == 87) upDirection = true;
-    if (event.which == 40 || event.which == 83) downDirection = true;
-    if (event.which == 37 || event.which == 65) leftDirection = true;
-    if (event.which == 39 || event.which == 68) rightDirection = true;
+  function onKeyDown(e) {
+    if (e.which == 38 || e.which == 87) direction.up = true;
+    if (e.which == 40 || e.which == 83) direction.down = true;
+    if (e.which == 37 || e.which == 65) direction.left = true;
+    if (e.which == 39 || e.which == 68) direction.right = true;
   }
-  function onKeyUp(event) {
-    if (event.which == 38 || event.which == 87) upDirection = false;
-    if (event.which == 40 || event.which == 83) downDirection = false;
-    if (event.which == 37 || event.which == 65) leftDirection = false;
-    if (event.which == 39 || event.which == 68) rightDirection = false;
+  function onKeyUp(e) {
+    if (e.which == 38 || e.which == 87) direction.up = false;
+    if (e.which == 40 || e.which == 83) direction.down = false;
+    if (e.which == 37 || e.which == 65) direction.left = false;
+    if (e.which == 39 || e.which == 68) direction.right = false;
   }
 
   const onMove = () => {
-    if (upDirection && moveUp) {
+    if (direction.up && move.up) {
       playerSet.position.y += speed;
       camera.position.y += speed;
     }
-    if (downDirection && moveDown) {
+    if (direction.down && move.down) {
       playerSet.position.y -= speed;
       camera.position.y -= speed;
     }
-    if (leftDirection && moveLeft) {
+    if (direction.left && move.left) {
       playerSet.position.x -= speed;
       camera.position.x -= speed;
     }
-    if (rightDirection && moveRight) {
+    if (direction.right && move.right) {
       playerSet.position.x += speed;
       camera.position.x += speed;
     }
@@ -103,26 +109,32 @@ const createRender = async (gl) => {
     raycasterCompleteLevel.set(playerSet.position, completeLevel);
   };
 
+  // ***** detecting wall collisions
+  // raycasters for detecting wall collisions
   const up = new THREE.Vector3(0, 1, 0);
   const upRaycaster = new THREE.Raycaster();
   upRaycaster.set(playerSet.position, up);
-  upRaycaster.far = .8;
+  upRaycaster.far = 0.8;
 
+  // raycasters for detecting wall collisions
   const down = new THREE.Vector3(0, -1, 0);
   const downRaycaster = new THREE.Raycaster();
   downRaycaster.set(playerSet.position, down);
-  downRaycaster.far = .8;
+  downRaycaster.far = 0.8;
 
+  // raycasters for detecting wall collisions
   const left = new THREE.Vector3(-1, 0, 0);
   const leftRaycaster = new THREE.Raycaster();
   leftRaycaster.set(playerSet.position, left);
-  leftRaycaster.far = .8;
+  leftRaycaster.far = 0.8;
 
+  // raycasters for detecting wall collisions
   const right = new THREE.Vector3(1, 0, 0);
   const rightRaycaster = new THREE.Raycaster();
   rightRaycaster.set(playerSet.position, right);
-  rightRaycaster.far = .8;
+  rightRaycaster.far = 0.8;
 
+  // function for detecting wall collisions
   const wallIntersects = () => {
     const intersectsUp = upRaycaster.intersectObjects(
       mazeCompleted.children,
@@ -140,14 +152,16 @@ const createRender = async (gl) => {
       mazeCompleted.children,
       true
     );
-    if (intersectsUp.length > 0 && upDirection) moveUp = false;
-    else moveDown = true;
-    if (intersectsDown.length > 0 && downDirection) moveDown = false;
-    else moveUp = true;
-    if (intersectsLeft.length > 0 && leftDirection) moveLeft = false;
-    else moveRight = true;
-    if (intersectsRight.length > 0 && rightDirection) moveRight = false;
-    else moveLeft = true;
+
+    if (intersectsUp.length > 0 && direction.up) move.up = false;
+    else move.up = true;
+    if (intersectsDown.length > 0 && direction.down) move.down = false;
+    else move.down = true;
+    if (intersectsLeft.length > 0 && direction.left) move.left = false;
+    else move.left = true;
+    if (intersectsRight.length > 0 && direction.right) move.right = false;
+    else move.right = true;
+
     if (intersectsUp.length > 0) {
       playerSet.position.y -= speed;
       camera.position.y -= speed;
@@ -167,13 +181,16 @@ const createRender = async (gl) => {
   };
 
 
+  // ***** showing pathway green
   let complete = false;
 
+  // raycaster for showing pathway green
   const location = new THREE.Vector3(0, 0, -1);
   const raycasterLocation = new THREE.Raycaster();
   raycasterLocation.set(playerSet.position, location);
   raycasterLocation.far = 0.85;
 
+  // function for showing pathway green
   const locationIntersects = () => {
     const intersects = raycasterLocation.intersectObjects(
       pathLights.children,
@@ -186,19 +203,22 @@ const createRender = async (gl) => {
     }
   };
 
+  // ***** detecting completion of level
+  // raycaster for detecting level completion sphere
   const completeLevel = new THREE.Vector3(0, 0, 1);
   const raycasterCompleteLevel = new THREE.Raycaster();
   raycasterCompleteLevel.set(playerSet.position, completeLevel);
   raycasterCompleteLevel.far = 3;
 
+  // function for detecting level completion sphere
   const levelCompleteIntersects = () => {
     const intersects = raycasterCompleteLevel.intersectObjects(
       levelComplete.children
     );
     if (intersects.length > 0 && !complete) {
-      scene.remove(levelComplete)
+      scene.remove(levelComplete);
       store.dispatch(editLevelComplete(true));
-        complete = true;
+      complete = true;
     }
   };
 

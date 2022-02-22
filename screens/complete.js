@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { editLevelComplete, selectUser } from "../state/userSlice";
 import backgroundImage from "../assets/backgroundImage.png";
 
-export default function game({ navigation }) {
+export default function complete({ navigation }) {
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);

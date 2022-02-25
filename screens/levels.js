@@ -6,6 +6,7 @@ import backgroundImage from "../assets/backgroundImage.png";
 import checkIcon from "../assets/checkIcon.png";
 import lockIcon from "../assets/lockIcon.png";
 import { selectUser, editLevelComplete } from "../state/userSlice";
+import mazeGenerator from "../elements/objects/maze";
 
 export default function levels({ navigation }) {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function levels({ navigation }) {
 
   const pressHandler = (num) => {
     dispatch(editLevelComplete(false));
+    mazeGenerator(num)
     navigation.navigate("Game", { level: num });
   };
 

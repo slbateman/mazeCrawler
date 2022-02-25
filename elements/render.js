@@ -9,12 +9,17 @@ import { walls } from "./objects/walls";
 import { pillars } from "./objects/pillars";
 import { pathLights } from "./objects/pathLights";
 import { levelComplete } from "./objects/levelComplete";
-import { shieldItems } from "./objects/shieldItems";
-import { editLevelComplete } from "../state/userSlice";
+import { shieldItems, shields } from "./objects/shieldItems";
+import { updatePlayerInv, editLevelComplete } from "../state/userSlice";
 import store from "../state/store";
 
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
+
+  const state = store.getState();
+  const user = state.user.user;
+  let playerInv = user.playerInv;
+  console.log(playerInv)
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
   camera.position.set(0, -2, 10);
@@ -45,7 +50,7 @@ const createRender = async (gl) => {
   scene.add(mazeCompleted);
   scene.add(pathLights);
   scene.add(levelComplete);
-  scene.add(shieldItems);
+  // scene.add(shieldItems);
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -67,9 +72,6 @@ const createRender = async (gl) => {
   };
 
   let speed = 0.1;
-
-  document.addEventListener("keydown", onKeyDown);
-  document.addEventListener("keyup", onKeyUp);
 
   function onKeyDown(e) {
     if (e.which == 38 || e.which == 87) direction.up = true;
@@ -180,7 +182,6 @@ const createRender = async (gl) => {
     }
   };
 
-
   // ***** showing pathway green
   let complete = false;
 
@@ -218,10 +219,59 @@ const createRender = async (gl) => {
     if (intersects.length > 0 && !complete) {
       scene.remove(levelComplete);
       store.dispatch(editLevelComplete(true));
+      store.dispatch(updatePlayerInv(playerInv))
       complete = true;
     }
   };
 
+  // ***** detecting item grab
+  // raycaster for mouse pointer for detecting item grab
+  const pointerRaycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  pointerRaycaster.setFromCamera(pointer, camera);
+
+  // function for mouse pointer for detecting item grab
+  function onPointerMove(event) {
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1.005;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1.07;
+  }
+  console.log(shields);
+  // function for shield item grab
+  const grabShield = () => {
+    pointerRaycaster.setFromCamera(pointer, camera);
+    const intersects = pointerRaycaster.intersectObjects(
+      shieldItems.children,
+      true
+    );
+    // console.log(shieldItems.children)
+    if (intersects.length > 0 && !complete) {
+      for (let i = 0; i < intersects.length; i++) {
+        // console.log(user.playerInv)
+        const shield = shields.find(
+          (e) => e.uuid === intersects[i].object.uuid
+        );
+        playerInv = [...playerInv, {
+          uuid: shield.uuid,
+          name: shield.name,
+          type: shield.type,
+          color: shield.color,
+          size: shield.size,
+          shieldPoints: shield.shieldPoints,
+          multiplier: shield.multiplier,
+        }];
+        shieldItems.remove(intersects[i].object);
+        shields.splice(
+          shields.findIndex((e) => e.uuid === shield.uuid),
+          1
+        );
+      }
+    }
+  };
+
+  // event listeners
+  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("keyup", onKeyUp);
+  document.addEventListener("pointermove", onPointerMove);
   // let requestId
   const render = () => {
     requestAnimationFrame(render);
@@ -229,6 +279,7 @@ const createRender = async (gl) => {
     wallIntersects();
     locationIntersects();
     levelCompleteIntersects();
+    grabShield();
     // zoomControls.update();
     renderer.render(scene, camera);
     gl.endFrameEXP();

@@ -2,12 +2,16 @@ import * as THREE from "three";
 import Shield from "../itemClasses/shieldClasses";
 
 export const shieldItems = new THREE.Group();
+export const shields = []
 
 export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
 
   // reset shieldItems before each generation
   for (let i = shieldItems.children.length - 1; i >= 0; i--) {
     shieldItems.remove(shieldItems.children[i]);
+  }
+  for (let i = shields.length - 1; i >= 0; i--) {
+    shields.splice(shields[i], 1);
   }
 
   // random generation of shield items
@@ -56,6 +60,8 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
       Math.floor(Math.random() * mazeSize) * 5 + 2.5,
       shield.size / 2
     );
+    shield.uuid = shieldItem.uuid
+    shields.push(shield)
     shieldItems.add(shieldItem);
   }
   shieldItems.position.set((-mazeSize * 5) / 2, (-mazeSize * 5) / 2, 0);

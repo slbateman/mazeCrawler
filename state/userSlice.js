@@ -66,6 +66,10 @@ export const userSlice = createSlice({
         currentLevel: action.payload.currentLevel,
       });
     },
+    updatePlayerInv: (state, action) => {
+      state.user.playerInv = action.payload
+      updateUser(state.user._id, action.payload)
+    }
   },
 });
 
@@ -77,6 +81,7 @@ export const {
   removeUser,
   editLevelComplete,
   editCurrentLevel,
+  updatePlayerInv
 } = userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;

@@ -18,8 +18,8 @@ const createRender = async (gl) => {
 
   const state = store.getState();
   const user = state.user.user;
-  let playerInv = user.playerInv;
-  console.log(playerInv)
+  // let playerInv = user.playerInv;
+  // console.log(playerInv)
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
   camera.position.set(0, -2, 10);
@@ -50,7 +50,7 @@ const createRender = async (gl) => {
   scene.add(mazeCompleted);
   scene.add(pathLights);
   scene.add(levelComplete);
-  // scene.add(shieldItems);
+  scene.add(shieldItems);
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -250,7 +250,8 @@ const createRender = async (gl) => {
         const shield = shields.find(
           (e) => e.uuid === intersects[i].object.uuid
         );
-        playerInv = [...playerInv, {
+        store.dispatch(updatePlayerInv({
+          playerInv: [...user.playerInv, {
           uuid: shield.uuid,
           name: shield.name,
           type: shield.type,
@@ -258,7 +259,10 @@ const createRender = async (gl) => {
           size: shield.size,
           shieldPoints: shield.shieldPoints,
           multiplier: shield.multiplier,
-        }];
+          }]
+        }))
+        
+        console.log(user.playerInv)
         shieldItems.remove(intersects[i].object);
         shields.splice(
           shields.findIndex((e) => e.uuid === shield.uuid),

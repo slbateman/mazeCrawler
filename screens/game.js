@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { GLView } from "expo-gl";
 import createRender from "../elements/render";
-import mazeGenerator from "../elements/objects/maze";
+// import mazeGenerator from "../elements/objects/maze";
 import { globalStyles } from "../styles/globalStyles";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,6 +10,7 @@ import {
   editCurrentLevel,
   selectUser,
 } from "../state/userSlice";
+import GameHUD from "./gameHUD";
 
 export default function game({ navigation }) {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function game({ navigation }) {
   const levelComplete = useSelector(selectLevelComplete);
   const level = navigation.getParam("level");
 
-  mazeGenerator(level);
+  // mazeGenerator(level);
 
   useEffect(() => {
     if (levelComplete && user.currentLevel === level) {
@@ -39,7 +40,7 @@ export default function game({ navigation }) {
     <View style={{ flex: 1 }}>
       <GLView style={{ flex: 1 }} onContextCreate={createRender}>
         <View style={{ zIndex: 9999 }}>
-          <Text style={globalStyles.gameTitleLogin}>Good Luck</Text>
+          {/* <GameHUD level={level}></GameHUD> */}
         </View>
       </GLView>
     </View>

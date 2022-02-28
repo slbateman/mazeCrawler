@@ -120,6 +120,7 @@ export const globalStyles = StyleSheet.create({
     borderColor: "#C4C4C4",
     borderRadius: 10,
     marginLeft: 5,
+    marginRight: 5,
     marginTop: 5,
   },
   playerLevelDisplayBarInner: {

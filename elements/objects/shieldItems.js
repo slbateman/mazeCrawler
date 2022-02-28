@@ -18,7 +18,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
   for (let i = 0; i < level; i++) {
     const opts = [
       {
-        name: "",
+        name: "Light Shield",
         type: "shield",
         color: "green",
         size: 0.85,
@@ -26,7 +26,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         multiplier: 1,
       },
       {
-        name: "",
+        name: "Boosted Shield",
         type: "shield",
         color: "blue",
         size: 1,
@@ -34,7 +34,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         multiplier: 2,
       },
       {
-        name: "",
+        name: "High Voltage Shield",
         type: "shield",
         color: "white",
         size: 1.15,

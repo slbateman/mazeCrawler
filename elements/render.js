@@ -260,7 +260,7 @@ const createRender = async (gl) => {
               ...user.playerInv,
               {
                 uuid: shield.uuid,
-                name: shield.name,
+                name: shield.itemName,
                 type: shield.type,
                 color: shield.color,
                 size: shield.size,
@@ -274,7 +274,7 @@ const createRender = async (gl) => {
         //   updateEquippedShield({
         //     equippedShield: {
         //       uuid: shield.uuid,
-        //       name: shield.name,
+        //       name: shield.itemName,
         //       type: shield.type,
         //       color: shield.color,
         //       size: shield.size,

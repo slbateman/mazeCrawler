@@ -10,14 +10,18 @@ import { pillars } from "./objects/pillars";
 import { pathLights } from "./objects/pathLights";
 import { levelComplete } from "./objects/levelComplete";
 import { shieldItems, shields } from "./objects/shieldItems";
-import { updatePlayerInv, editLevelComplete } from "../state/userSlice";
+import {
+  updatePlayerInv,
+  editLevelComplete,
+  updateEquippedShield,
+} from "../state/userSlice";
 import store from "../state/store";
 
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
-  const state = store.getState();
-  const user = state.user.user;
+  let state = store.getState();
+  let user = state.user.user;
   // let playerInv = user.playerInv;
   // console.log(playerInv)
 
@@ -219,7 +223,7 @@ const createRender = async (gl) => {
     if (intersects.length > 0 && !complete) {
       scene.remove(levelComplete);
       store.dispatch(editLevelComplete(true));
-      store.dispatch(updatePlayerInv(playerInv))
+      // store.dispatch(updatePlayerInv(playerInv))
       complete = true;
     }
   };
@@ -235,7 +239,7 @@ const createRender = async (gl) => {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1.005;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1.07;
   }
-  console.log(shields);
+
   // function for shield item grab
   const grabShield = () => {
     pointerRaycaster.setFromCamera(pointer, camera);
@@ -250,24 +254,42 @@ const createRender = async (gl) => {
         const shield = shields.find(
           (e) => e.uuid === intersects[i].object.uuid
         );
-        store.dispatch(updatePlayerInv({
-          playerInv: [...user.playerInv, {
-          uuid: shield.uuid,
-          name: shield.name,
-          type: shield.type,
-          color: shield.color,
-          size: shield.size,
-          shieldPoints: shield.shieldPoints,
-          multiplier: shield.multiplier,
-          }]
-        }))
-        
-        console.log(user.playerInv)
+        store.dispatch(
+          updatePlayerInv({
+            playerInv: [
+              ...user.playerInv,
+              {
+                uuid: shield.uuid,
+                name: shield.name,
+                type: shield.type,
+                color: shield.color,
+                size: shield.size,
+                shieldPoints: shield.shieldPoints,
+                shieldMaxPoints: shield.shieldMaxPoints,
+              },
+            ],
+          })
+        );
+        // store.dispatch(
+        //   updateEquippedShield({
+        //     equippedShield: {
+        //       uuid: shield.uuid,
+        //       name: shield.name,
+        //       type: shield.type,
+        //       color: shield.color,
+        //       size: shield.size,
+        //       shieldPoints: shield.shieldPoints,
+        //       shieldMaxPoints: shield.shieldMaxPoints,
+        //     },
+        //   })
+        // );
         shieldItems.remove(intersects[i].object);
         shields.splice(
           shields.findIndex((e) => e.uuid === shield.uuid),
           1
         );
+        state = store.getState();
+        user = state.user.user;
       }
     }
   };

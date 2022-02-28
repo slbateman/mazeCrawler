@@ -4,6 +4,7 @@ import { globalStyles } from "../styles/globalStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { editLevelComplete, selectUser } from "../state/userSlice";
 import backgroundImage from "../assets/backgroundImage.png";
+import mazeGenerator from "../elements/objects/maze";
 
 export default function complete({ navigation }) {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export default function complete({ navigation }) {
 
   const pressHandler = (num) => {
     dispatch(editLevelComplete(false));
+    mazeGenerator(num)
     navigation.navigate("Game", { level: num });
   };
 

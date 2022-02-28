@@ -7,6 +7,7 @@ class Weapon {
       size: 0.1,
       damage: 5,
       charge: 100,
+      maxCharge: 100,
       distance: 10,
     },
     beamMed: {
@@ -16,6 +17,7 @@ class Weapon {
       size: 0.15,
       damage: 8,
       charge: 144,
+      maxCharge: 144,
       distance: 12,
     },
     beamHigh: {
@@ -25,6 +27,7 @@ class Weapon {
       size: 0.2,
       damage: 15,
       charge: 225,
+      maxCharge: 225,
       distance: 15,
     },
     diskLow: {
@@ -34,6 +37,7 @@ class Weapon {
       size: 0.1,
       damage: 10,
       charge: 100,
+      maxCharge: 100,
       distance: 7.5,
     },
     diskMed: {
@@ -43,6 +47,7 @@ class Weapon {
       size: 0.15,
       damage: 20,
       charge: 144,
+      maxCharge: 144,
       distance: 12.5,
     },
     diskHigh: {
@@ -52,6 +57,7 @@ class Weapon {
       size: 0.2,
       damage: 30,
       charge: 225,
+      maxCharge: 225,
       distance: 17.5,
     },
   };
@@ -63,5 +69,6 @@ class Weapon {
     this.size = options[type].size;
     this.damage = options[type].damage + playerLevel;
     this.charge = options[type].charge;
+    this.maxCharge = options[type].charge;
   }
 }

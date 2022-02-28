@@ -12,9 +12,7 @@ const userSchema = mongoose.Schema({
   playerInv: { type: Array, default: [] },
   playerInvWeight: { type: Number, default: 0 },
   equippedWeapon: { type: Object, default: {} },
-  equippedShieldLow: { type: Object, default: {} },
-  equippedShieldMed: { type: Object, default: {} },
-  equippedShieldHigh: { type: Object, default: {} },
+  equippedShield: { type: Object, default: {} },
   createdAt: {
     type: String,
     default: new Date().toISOString,

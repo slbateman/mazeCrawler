@@ -40,7 +40,7 @@ export default function game({ navigation }) {
     <View style={{ flex: 1 }}>
       <GLView style={{ flex: 1 }} onContextCreate={createRender}>
         <View style={{ zIndex: 9999 }}>
-          {/* <GameHUD level={level}></GameHUD> */}
+          <GameHUD level={level}></GameHUD>
         </View>
       </GLView>
     </View>

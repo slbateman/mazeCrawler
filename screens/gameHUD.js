@@ -7,6 +7,10 @@ import GameHUDxp from "./gameHUDxp";
 import GameHUDhp from "./gameHUDhp";
 import GameHUDshield from "./gameHUDshield";
 import GameHUDweapon from "./gameHUDweapon";
+import GameHUDinventoryWeapons from "./gameHUDinventoryWeapons";
+import GameHUDinventoryShields from "./gameHUDinventoryShields";
+import GameHUDinventoryHP from "./gameHUDinventoryHP";
+import GameHUDinventoryCharge from "./gameHUDinventoryCharge";
 
 export default function GameHUD({ level }) {
   const user = useSelector(selectUser);
@@ -24,18 +28,13 @@ export default function GameHUD({ level }) {
           <GameHUDshield />
           <GameHUDweapon />
         </View>
-        {/* <View style={{ flex: 1 }}>
-          <Text style={globalStyles.gameHudLevel}>Player Inventory:</Text>
-          {!user.playerInv ? (
-            <></>
-          ) : (
-            user.playerInv.map((data, i) => (
-              <Text style={globalStyles.gameHudLevel} key={`item${i}`}>
-                {data.name}
-              </Text>
-            ))
-          )}
-        </View> */}
+        <View style={{ flex: 1 }}>
+          <Text style={globalStyles.gameHUDinventoryHeader}>{user.playerInv.length > 0 ? "Inventory" : ""}</Text>
+          <GameHUDinventoryShields />
+          <GameHUDinventoryWeapons />
+          <GameHUDinventoryHP />
+          <GameHUDinventoryCharge />
+        </View>
       </View>
     </View>
   );

@@ -212,4 +212,24 @@ export const globalStyles = StyleSheet.create({
     height: 18,
     borderRadius: 10,
   },
+  gameHUDinventoryHeader: {
+    textAlign: "right",
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#5B5B5B",
+  },
+  gameHUDinventory: {
+    cursor: "pointer",
+    textAlign: "right",
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#5B5B5B",
+  },
+  gameHUDinventoryItemName: {
+    cursor: "pointer",
+    textAlign: "right",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#5B5B5B",
+  }
 });

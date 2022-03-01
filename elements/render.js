@@ -14,15 +14,20 @@ import {
   updatePlayerInv,
   editLevelComplete,
   updateEquippedShield,
+  updatePlayerXP,
 } from "../state/userSlice";
 import store from "../state/store";
+import { updateUser } from "../api/userAPI";
 
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
 
   let state = store.getState();
   let user = state.user.user;
-  // let playerInv = user.playerInv;
+  let level = state.user.levelComplete.level
+  // const playerInv = user.playerInv;
+  // const equippedShield = user.equippedShield
+  // const equippedWeapon = user.equippedWeapon 
   // console.log(playerInv)
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
@@ -223,7 +228,12 @@ const createRender = async (gl) => {
     if (intersects.length > 0 && !complete) {
       scene.remove(levelComplete);
       store.dispatch(editLevelComplete(true));
-      // store.dispatch(updatePlayerInv(playerInv))
+      store.dispatch(updatePlayerXP(5 + 8 * level))
+      // updateUser(user._id, {
+      //   playerInv: user.playerInv,
+      //   equippedShield: user.equippedShield,
+      //   equippedWeapon: user.equippedWeapon
+      // })
       complete = true;
     }
   };
@@ -240,6 +250,13 @@ const createRender = async (gl) => {
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1.07;
   }
 
+  let mousedown = false
+  function onMouseDown() {
+    mousedown = true
+  }
+  function onMouseUp() {
+    mousedown = false
+  }
   // function for shield item grab
   const grabShield = () => {
     pointerRaycaster.setFromCamera(pointer, camera);
@@ -248,7 +265,7 @@ const createRender = async (gl) => {
       true
     );
     // console.log(shieldItems.children)
-    if (intersects.length > 0 && !complete) {
+    if (intersects.length > 0 && !complete && mousedown) {
       for (let i = 0; i < intersects.length; i++) {
         // console.log(user.playerInv)
         const shield = shields.find(
@@ -270,19 +287,6 @@ const createRender = async (gl) => {
             ],
           })
         );
-        // store.dispatch(
-        //   updateEquippedShield({
-        //     equippedShield: {
-        //       uuid: shield.uuid,
-        //       name: shield.itemName,
-        //       type: shield.type,
-        //       color: shield.color,
-        //       size: shield.size,
-        //       shieldPoints: shield.shieldPoints,
-        //       shieldMaxPoints: shield.shieldMaxPoints,
-        //     },
-        //   })
-        // );
         shieldItems.remove(intersects[i].object);
         shields.splice(
           shields.findIndex((e) => e.uuid === shield.uuid),
@@ -298,6 +302,8 @@ const createRender = async (gl) => {
   document.addEventListener("keydown", onKeyDown);
   document.addEventListener("keyup", onKeyUp);
   document.addEventListener("pointermove", onPointerMove);
+  document.addEventListener("mousedown", onMouseDown);
+  document.addEventListener("mouseup", onMouseUp)
   // let requestId
   const render = () => {
     requestAnimationFrame(render);

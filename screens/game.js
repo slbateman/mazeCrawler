@@ -22,7 +22,7 @@ export default function game({ navigation }) {
   // mazeGenerator(level);
 
   useEffect(() => {
-    if (levelComplete && user.currentLevel === level) {
+    if (levelComplete.complete && user.currentLevel === level) {
       dispatch(
         editCurrentLevel({
           _id: user._id,
@@ -30,7 +30,7 @@ export default function game({ navigation }) {
         })
       );
     }
-    if (levelComplete) {
+    if (levelComplete.complete) {
       navigation.goBack();
       navigation.navigate("Complete");
     }

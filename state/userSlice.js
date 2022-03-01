@@ -4,7 +4,10 @@ import { updateUser, deleteUser } from "../api/userAPI";
 let allUsers = [];
 let user = null;
 let localUserInfo = JSON.parse(localStorage.getItem("localUserInfo"));
-let levelComplete = false;
+let levelComplete = {
+  level: 0,
+  complete: false,
+};
 
 if (!localUserInfo) {
   localUserInfo = {
@@ -57,8 +60,11 @@ export const userSlice = createSlice({
       state.levelComplete = false;
       deleteUser(action.payload._id);
     },
+    editLevel: (state, action) => {
+      state.levelComplete.level = action.payload;
+    },
     editLevelComplete: (state, action) => {
-      state.levelComplete = action.payload;
+      state.levelComplete.complete = action.payload;
     },
     editCurrentLevel: (state, action) => {
       state.user.currentLevel = action.payload.currentLevel;
@@ -67,17 +73,35 @@ export const userSlice = createSlice({
       });
     },
     updatePlayerInv: (state, action) => {
-      state.user.playerInv = action.payload.playerInv
-      updateUser(state.user._id, action.payload)
+      state.user.playerInv = action.payload.playerInv;
+      updateUser(state.user._id, action.payload);
     },
     updateEquippedShield: (state, action) => {
-      state.user.equippedShield = action.payload.equippedShield
-      updateUser(state.user._id, action.payload)
+      state.user.equippedShield = action.payload.equippedShield;
+      updateUser(state.user._id, action.payload);
     },
     updateEquippedWeapon: (state, action) => {
-      state.user.equippedWeapon = action.payload.equippedWeapon
-      updateUser(state.user._id, action.payload)
-    }
+      state.user.equippedWeapon = action.payload.equippedWeapon;
+      updateUser(state.user._id, action.payload);
+    },
+    updatePlayerXP: (state, action) => {
+      state.user.playerXp = state.user.playerXp + action.payload;
+      state.user.playerLevelXp = state.user.playerLevelXp + action.payload;
+      if (
+        state.user.playerLevelXp >
+        (state.user.playerLevel + 1) * 100 + state.user.playerLevel * 50
+      ) {
+        state.user.playerLevelXp =
+          state.user.playerLevelXp -
+          ((state.user.playerLevel + 1) * 100 + state.user.playerLevel * 50);
+        state.user.playerLevel = state.user.playerLevel + 1;
+      }
+      updateUser(state.user._id, {
+        playerXp: state.user.playerXp,
+        playerLevelXp: state.user.playerLevelXp,
+        playerLevel: state.user.playerLevel,
+      });
+    },
   },
 });
 
@@ -88,10 +112,12 @@ export const {
   addUser,
   removeUser,
   editLevelComplete,
+  editLevel,
   editCurrentLevel,
   updatePlayerInv,
   updateEquippedShield,
-  updateEquippedWeapon
+  updateEquippedWeapon,
+  updatePlayerXP,
 } = userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;

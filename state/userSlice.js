@@ -95,11 +95,13 @@ export const userSlice = createSlice({
           state.user.playerLevelXp -
           ((state.user.playerLevel + 1) * 100 + state.user.playerLevel * 50);
         state.user.playerLevel = state.user.playerLevel + 1;
+        state.user.playerHp = state.user.playerLevel * 10 + 100
       }
       updateUser(state.user._id, {
         playerXp: state.user.playerXp,
         playerLevelXp: state.user.playerLevelXp,
         playerLevel: state.user.playerLevel,
+        playerHp: state.user.playerHp
       });
     },
   },

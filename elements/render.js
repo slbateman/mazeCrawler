@@ -10,6 +10,7 @@ import { pillars } from "./objects/pillars";
 import { pathLights } from "./objects/pathLights";
 import { levelComplete } from "./objects/levelComplete";
 import { shieldItems, shields } from "./objects/shieldItems";
+import { userShield, userShieldGenerator } from "./objects/userShield";
 import {
   updatePlayerInv,
   editLevelComplete,
@@ -24,11 +25,8 @@ const createRender = async (gl) => {
 
   let state = store.getState();
   let user = state.user.user;
-  let level = state.user.levelComplete.level
-  // const playerInv = user.playerInv;
-  // const equippedShield = user.equippedShield
-  // const equippedWeapon = user.equippedWeapon 
-  // console.log(playerInv)
+  let level = state.user.levelComplete.level;
+  userShieldGenerator(user.equippedShield)
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
   camera.position.set(0, -2, 10);
@@ -47,7 +45,15 @@ const createRender = async (gl) => {
   playerSet.add(player);
   playerSet.add(topDownSpotlight);
   playerSet.add(playerOmniLight);
+
+  playerSet.add(userShield)
   playerSet.position.set(0, 0, 1);
+  const userShieldAnimation = () => {
+    for (let i = 0; i < userShield.children.length; i++) {
+      userShield.children[i].rotation.x += 0.1
+      userShield.children[i].rotation.y += 0.1
+    }
+  }
 
   const mazeCompleted = new THREE.Group();
   mazeCompleted.add(pillars);
@@ -60,6 +66,13 @@ const createRender = async (gl) => {
   scene.add(pathLights);
   scene.add(levelComplete);
   scene.add(shieldItems);
+// console.log(shieldItems)
+  const shieldItemsAnimation = () => {
+    for (let i = 0; i < shieldItems.children.length; i++) {
+      shieldItems.children[i].rotation.x += 0.1
+      shieldItems.children[i].rotation.y += 0.1
+    }
+  }
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -227,8 +240,9 @@ const createRender = async (gl) => {
     );
     if (intersects.length > 0 && !complete) {
       scene.remove(levelComplete);
+      window.cancelAnimationFrame(requestId)
       store.dispatch(editLevelComplete(true));
-      store.dispatch(updatePlayerXP(5 + 8 * level))
+      store.dispatch(updatePlayerXP(5 + 8 * level));
       // updateUser(user._id, {
       //   playerInv: user.playerInv,
       //   equippedShield: user.equippedShield,
@@ -250,12 +264,12 @@ const createRender = async (gl) => {
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1.07;
   }
 
-  let mousedown = false
+  let mousedown = false;
   function onMouseDown() {
-    mousedown = true
+    mousedown = true;
   }
   function onMouseUp() {
-    mousedown = false
+    mousedown = false;
   }
   // function for shield item grab
   const grabShield = () => {
@@ -264,37 +278,33 @@ const createRender = async (gl) => {
       shieldItems.children,
       true
     );
-    // console.log(shieldItems.children)
     if (intersects.length > 0 && !complete && mousedown) {
-      for (let i = 0; i < intersects.length; i++) {
-        // console.log(user.playerInv)
-        const shield = shields.find(
-          (e) => e.uuid === intersects[i].object.uuid
-        );
-        store.dispatch(
-          updatePlayerInv({
-            playerInv: [
-              ...user.playerInv,
-              {
-                uuid: shield.uuid,
-                name: shield.itemName,
-                type: shield.type,
-                color: shield.color,
-                size: shield.size,
-                shieldPoints: shield.shieldPoints,
-                shieldMaxPoints: shield.shieldMaxPoints,
-              },
-            ],
-          })
-        );
-        shieldItems.remove(intersects[i].object);
-        shields.splice(
-          shields.findIndex((e) => e.uuid === shield.uuid),
-          1
-        );
-        state = store.getState();
-        user = state.user.user;
-      }
+      const shield = shields.find(
+        (e) => e.uuid === intersects[0].object.parent.uuid
+      );
+      store.dispatch(
+        updatePlayerInv({
+          playerInv: [
+            ...user.playerInv,
+            {
+              uuid: shield.uuid,
+              name: shield.itemName,
+              type: shield.type,
+              color: shield.color,
+              size: shield.size,
+              shieldPoints: shield.shieldPoints,
+              shieldMaxPoints: shield.shieldMaxPoints,
+            },
+          ],
+        })
+      );
+      shieldItems.remove(intersects[0].object.parent);
+      shields.splice(
+        shields.findIndex((e) => e.uuid === shield.uuid),
+        1
+      );
+      // state = store.getState();
+      // user = state.user.user;
     }
   };
 
@@ -303,10 +313,13 @@ const createRender = async (gl) => {
   document.addEventListener("keyup", onKeyUp);
   document.addEventListener("pointermove", onPointerMove);
   document.addEventListener("mousedown", onMouseDown);
-  document.addEventListener("mouseup", onMouseUp)
-  // let requestId
+  document.addEventListener("mouseup", onMouseUp);
+
+  let requestId
   const render = () => {
-    requestAnimationFrame(render);
+    requestId = requestAnimationFrame(render);
+    shieldItemsAnimation();
+    userShieldAnimation();
     onMove();
     wallIntersects();
     locationIntersects();

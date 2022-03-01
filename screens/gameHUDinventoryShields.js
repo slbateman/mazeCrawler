@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import { globalStyles } from "../styles/globalStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, updateEquippedShield } from "../state/userSlice";
+import { userShieldGenerator } from "../elements/objects/userShield";
 
 export default function GameHUDinventoryShields() {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ export default function GameHUDinventoryShields() {
         },
       })
     );
+    userShieldGenerator(data)
   };
 
   const viewHandler = () => {

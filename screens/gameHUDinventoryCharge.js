@@ -12,7 +12,7 @@ export default function GameHUDinventoryCharge() {
     <></>
   ) : (
     <View>
-      <Text style={globalStyles.gameHUDinventory}>Shields</Text>
+      <Text style={globalStyles.gameHUDinventory}>Charge Cartridges</Text>
       <View>
         {user.playerInv.map((data, i) => {
           if (data.type === "charge") {
@@ -21,7 +21,7 @@ export default function GameHUDinventoryCharge() {
                 key={`chargeItem${i}`}
                 style={globalStyles.gameHUDinventoryItemName}
               >
-                {data.name}- {data.shieldPoints}/{data.shieldMaxPoints}
+                {data.name}- {data.charge} Charge
               </Text>
             );
           }

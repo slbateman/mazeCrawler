@@ -73,6 +73,10 @@ export const userSlice = createSlice({
     updateEquippedShield: (state, action) => {
       state.user.equippedShield = action.payload.equippedShield
       updateUser(state.user._id, action.payload)
+    },
+    updateEquippedWeapon: (state, action) => {
+      state.user.equippedWeapon = action.payload.equippedWeapon
+      updateUser(state.user._id, action.payload)
     }
   },
 });
@@ -86,7 +90,8 @@ export const {
   editLevelComplete,
   editCurrentLevel,
   updatePlayerInv,
-  updateEquippedShield
+  updateEquippedShield,
+  updateEquippedWeapon
 } = userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;

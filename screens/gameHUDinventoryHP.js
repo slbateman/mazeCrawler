@@ -12,7 +12,7 @@ export default function GameHUDinventoryHP() {
     <></>
   ) : (
     <View>
-      <Text style={globalStyles.gameHUDinventory}>Shields</Text>
+      <Text style={globalStyles.gameHUDinventory}>HP Boosters</Text>
       <View>
         {user.playerInv.map((data, i) => {
           if (data.type === "hpBooster") {
@@ -21,7 +21,7 @@ export default function GameHUDinventoryHP() {
                 key={`hpItem${i}`}
                 style={globalStyles.gameHUDinventoryItemName}
               >
-                {data.name}- {data.shieldPoints}/{data.shieldMaxPoints}
+                {data.name}- {data.hpBoost} HP
               </Text>
             );
           }

@@ -19,6 +19,9 @@ import {
 } from "../state/userSlice";
 import store from "../state/store";
 import { updateUser } from "../api/userAPI";
+import { enemyGroups } from "./objects/enemies";
+
+export let requestId
 
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
@@ -40,12 +43,23 @@ const createRender = async (gl) => {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.BasicShadowMap;
 
+  const mazeCompleted = new THREE.Group();
+  mazeCompleted.add(pillars);
+  mazeCompleted.add(walls);
+
+  const scene = new THREE.Scene();
+  scene.add(ground);
+  scene.add(mazeCompleted);
+  scene.add(pathLights);
+  scene.add(levelComplete);
+  scene.add(shieldItems);
+  scene.add(enemyGroups)
+
   const playerSet = new THREE.Group();
   topDownSpotlight.target = player;
   playerSet.add(player);
   playerSet.add(topDownSpotlight);
   playerSet.add(playerOmniLight);
-
   playerSet.add(userShield)
   playerSet.position.set(0, 0, 1);
   const userShieldAnimation = () => {
@@ -54,25 +68,21 @@ const createRender = async (gl) => {
       userShield.children[i].rotation.y += 0.1
     }
   }
-
-  const mazeCompleted = new THREE.Group();
-  mazeCompleted.add(pillars);
-  mazeCompleted.add(walls);
-
-  const scene = new THREE.Scene();
   scene.add(playerSet);
-  scene.add(ground);
-  scene.add(mazeCompleted);
-  scene.add(pathLights);
-  scene.add(levelComplete);
-  scene.add(shieldItems);
-// console.log(shieldItems)
+
   const shieldItemsAnimation = () => {
     for (let i = 0; i < shieldItems.children.length; i++) {
       shieldItems.children[i].rotation.x += 0.1
       shieldItems.children[i].rotation.y += 0.1
     }
   }
+
+  const enemyGroupsAnimation = () => {
+    for (let i = 0; i < enemyGroups.children.length; i++) {
+      enemyGroups.children[i].rotation.z += 0.1
+    }
+  }
+
   // scene.add(ambientLight);
 
   // const zoomControls = new OrbitControls(camera, document.body);
@@ -315,11 +325,12 @@ const createRender = async (gl) => {
   document.addEventListener("mousedown", onMouseDown);
   document.addEventListener("mouseup", onMouseUp);
 
-  let requestId
+
   const render = () => {
     requestId = requestAnimationFrame(render);
     shieldItemsAnimation();
     userShieldAnimation();
+    enemyGroupsAnimation();
     onMove();
     wallIntersects();
     locationIntersects();

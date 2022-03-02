@@ -19,8 +19,6 @@ export default function game({ navigation }) {
   const levelComplete = useSelector(selectLevelComplete);
   const level = navigation.getParam("level");
 
-  // mazeGenerator(level);
-
   useEffect(() => {
     if (levelComplete.complete && user.currentLevel === level) {
       dispatch(

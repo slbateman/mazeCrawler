@@ -10,7 +10,7 @@ export const pillarsGenerator = (mazeSize) => {
     pillars.remove(pillars.children[i]);
   }
   // creating the pillars the stand at each wall joint
-  const pillarGeometry = new THREE.CylinderGeometry(0.75, 0.75, 3);
+  const pillarGeometry = new THREE.CylinderGeometry(0.75, 0.75, 3, 16);
   const wallTexture = new THREE.TextureLoader().load(wallTextureImg);
   for (let i = 0; i <= mazeSize; i++) {
     for (let j = 0; j <= mazeSize; j++) {

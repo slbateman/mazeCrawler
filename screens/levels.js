@@ -7,6 +7,7 @@ import checkIcon from "../assets/checkIcon.png";
 import lockIcon from "../assets/lockIcon.png";
 import { selectUser, editLevelComplete, editLevel } from "../state/userSlice";
 import mazeGenerator from "../elements/objects/maze";
+import { requestId } from "../elements/render";
 
 export default function levels({ navigation }) {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function levels({ navigation }) {
   const scrollRef = useRef();
 
   const pressHandler = (num) => {
+    window.cancelAnimationFrame(requestId)
     dispatch(editLevel(num))
     dispatch(editLevelComplete(false));
     mazeGenerator(num)

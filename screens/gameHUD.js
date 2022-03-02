@@ -19,7 +19,7 @@ export default function GameHUD({ level }) {
     <></>
   ) : (
     <View style={globalStyles.gameHUD}>
-      <Text style={globalStyles.gameHudLevel}>Maze: {level}</Text>
+      <Text style={globalStyles.gameHudLevel}>Level: {level}</Text>
       <br />
       <View style={{ flexDirection: "row" }}>
         <View style={{ flex: 1 }}>

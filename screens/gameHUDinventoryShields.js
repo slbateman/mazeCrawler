@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import { globalStyles } from "../styles/globalStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, updateEquippedShield } from "../state/userSlice";
-import { userShieldGenerator } from "../elements/objects/userShield";
+import { removeUserShield, userShieldGenerator } from "../elements/objects/userShield";
 
 export default function GameHUDinventoryShields() {
   const dispatch = useDispatch();
@@ -11,21 +11,38 @@ export default function GameHUDinventoryShields() {
   const shieldsExist = user.playerInv.find((e) => e.type === "shield");
   const [show, setShow] = useState(false);
 
-  const equipHandler = (data, i) => {
-    dispatch(
-      updateEquippedShield({
-        equippedShield: {
-          uuid: data.uuid,
-          name: data.name,
-          type: data.type,
-          color: data.color,
-          size: data.size,
-          shieldPoints: data.shieldPoints,
-          shieldMaxPoints: data.shieldMaxPoints,
-        },
-      })
-    );
-    userShieldGenerator(data)
+  const equipHandler = (data) => {
+    if (data.uuid === user.equippedShield.uuid) {
+      dispatch(
+        updateEquippedShield({
+          equippedShield: {
+            uuid: "",
+            name: "",
+            type: "",
+            color: "",
+            size: 0,
+            shieldPoints: 0,
+            shieldMaxPoints: 0,
+          },
+        })
+      );
+      removeUserShield()
+    } else {
+      dispatch(
+        updateEquippedShield({
+          equippedShield: {
+            uuid: data.uuid,
+            name: data.name,
+            type: data.type,
+            color: data.color,
+            size: data.size,
+            shieldPoints: data.shieldPoints,
+            shieldMaxPoints: data.shieldMaxPoints,
+          },
+        })
+      );
+      userShieldGenerator(data);
+    }
   };
 
   const viewHandler = () => {
@@ -47,7 +64,7 @@ export default function GameHUDinventoryShields() {
                 <Text
                   key={`shieldItem${i}`}
                   style={globalStyles.gameHUDinventoryItemName}
-                  onPress={() => equipHandler(data, i)}
+                  onPress={() => equipHandler(data)}
                 >
                   {data.uuid === user.equippedShield.uuid ? `-equipped- ` : ""}
                   {data.name}- {data.shieldPoints}/{data.shieldMaxPoints}

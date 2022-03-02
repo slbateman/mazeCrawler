@@ -13,7 +13,7 @@ export default function GameHUDshield() {
     <></>
   ) : (
     <>
-      {!user.equippedShield.name ? (
+      {!user.equippedShield.uuid ? (
         <></>
       ) : (
         <View style={globalStyles.shieldDisplay}>

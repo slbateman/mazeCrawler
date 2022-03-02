@@ -5,6 +5,7 @@ import { pillarsGenerator } from "./pillars";
 import { pathLightsGenerator } from "./pathLights";
 import { levelCompleteGenerator } from "./levelComplete";
 import { shieldItemsGenerator } from "./shieldItems";
+import { enemyGroupsGenerator } from "./enemies";
 
 const mazeGenerator = (level) => {
   const state = store.getState();
@@ -97,6 +98,7 @@ const mazeGenerator = (level) => {
   }
 
   shieldItemsGenerator(level, playerLevel, mazeSize);
+  enemyGroupsGenerator(level, playerLevel, mazeSize)
   levelCompleteGenerator(mazeSize);
   pathLightsGenerator(mazeSize);
   pillarsGenerator(mazeSize);

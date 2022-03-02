@@ -54,6 +54,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
       opacity: 0.35,
     });
     const shieldSphere = new THREE.Mesh(shieldSphereGeometry, shieldMaterial);
+    shieldSphere.receiveShadow = true
     
     const shieldRingGeometry = new THREE.TorusGeometry(
       shield.size / 2,
@@ -65,9 +66,12 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
       color: shield.color,
     });
     const shieldRing1 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial)
+    shieldRing1.receiveShadow = true
     const shieldRing2 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial)
+    shieldRing2.receiveShadow = true
     shieldRing2.rotation.x = Math.PI / 2
     const shieldRing3 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial)
+    shieldRing3.receiveShadow = true
     shieldRing3.rotation.y = Math.PI / 2
     
     const shieldItem = new THREE.Group()

@@ -19,6 +19,8 @@ import {
   updatePlayerXP,
   updatePlayerHP,
   updateShieldPoints,
+  editYouDied,
+  updatePlayerYouDied,
 } from "../state/userSlice";
 import store from "../state/store";
 import { updateUser } from "../api/userAPI";
@@ -396,8 +398,8 @@ const createRender = async (gl) => {
     user = state.user.user
     if (user.playerHp <= 0){
       window.cancelAnimationFrame(requestId);
-      store.dispatch(editLevelComplete(true));
-      complete = true;
+      store.dispatch(editYouDied(true));
+      store.dispatch(updatePlayerYouDied())
     }
   }
 

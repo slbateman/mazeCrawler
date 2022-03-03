@@ -5,7 +5,7 @@ import { globalStyles } from "../styles/globalStyles";
 import backgroundImage from "../assets/backgroundImage.png";
 import checkIcon from "../assets/checkIcon.png";
 import lockIcon from "../assets/lockIcon.png";
-import { selectUser, editLevelComplete, editLevel } from "../state/userSlice";
+import { selectUser, editLevelComplete, editLevel, editYouDied } from "../state/userSlice";
 import mazeGenerator from "../elements/objects/maze";
 import { requestId } from "../elements/render";
 
@@ -20,6 +20,7 @@ export default function levels({ navigation }) {
 
   const pressHandler = (num) => {
     window.cancelAnimationFrame(requestId)
+    dispatch(editYouDied(false))
     dispatch(editLevel(num))
     dispatch(editLevelComplete(false));
     mazeGenerator(num)

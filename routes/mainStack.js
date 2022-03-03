@@ -5,6 +5,7 @@ import signUp from "../screens/signUp";
 import levels from "../screens/levels";
 import game from "../screens/game";
 import complete from "../screens/complete";
+import youDied from "../screens/youDied";
 
 const screens = {
   Login: {
@@ -22,6 +23,9 @@ const screens = {
   Complete: {
     screen: complete,
   },
+  YouDied: {
+    screen: youDied
+  }
 };
 
 // home stack navigator screens

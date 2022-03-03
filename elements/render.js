@@ -10,18 +10,20 @@ import { pillars } from "./objects/pillars";
 import { pathLights } from "./objects/pathLights";
 import { levelComplete } from "./objects/levelComplete";
 import { shieldItems, shields } from "./objects/shieldItems";
+import { enemyGroups, enemies } from "./objects/enemies";
 import { userShield, userShieldGenerator } from "./objects/userShield";
 import {
   updatePlayerInv,
   editLevelComplete,
   updateEquippedShield,
   updatePlayerXP,
+  updatePlayerHP,
+  updateShieldPoints,
 } from "../state/userSlice";
 import store from "../state/store";
 import { updateUser } from "../api/userAPI";
-import { enemyGroups } from "./objects/enemies";
 
-export let requestId
+export let requestId;
 
 const createRender = async (gl) => {
   const { drawingBufferHeight: height, drawingBufferWidth: width } = gl;
@@ -29,7 +31,7 @@ const createRender = async (gl) => {
   let state = store.getState();
   let user = state.user.user;
   let level = state.user.levelComplete.level;
-  userShieldGenerator(user.equippedShield)
+  userShieldGenerator(user.equippedShield);
 
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 20);
   camera.position.set(0, -2, 10);
@@ -47,44 +49,46 @@ const createRender = async (gl) => {
   mazeCompleted.add(pillars);
   mazeCompleted.add(walls);
 
+  const collisionObjects = new THREE.Group();
+  collisionObjects.add(mazeCompleted);
+  collisionObjects.add(enemyGroups);
+
   const scene = new THREE.Scene();
   scene.add(ground);
-  scene.add(mazeCompleted);
+  scene.add(collisionObjects);
   scene.add(pathLights);
   scene.add(levelComplete);
   scene.add(shieldItems);
-  scene.add(enemyGroups)
 
   const playerSet = new THREE.Group();
   topDownSpotlight.target = player;
   playerSet.add(player);
   playerSet.add(topDownSpotlight);
   playerSet.add(playerOmniLight);
-  playerSet.add(userShield)
+  playerSet.add(userShield);
   playerSet.position.set(0, 0, 1);
   const userShieldAnimation = () => {
     for (let i = 0; i < userShield.children.length; i++) {
-      userShield.children[i].rotation.x += 0.1
-      userShield.children[i].rotation.y += 0.1
+      userShield.children[i].rotation.x += 0.1;
+      userShield.children[i].rotation.y += 0.1;
     }
-  }
+  };
   scene.add(playerSet);
 
   const shieldItemsAnimation = () => {
     for (let i = 0; i < shieldItems.children.length; i++) {
-      shieldItems.children[i].rotation.x += 0.1
-      shieldItems.children[i].rotation.y += 0.1
+      shieldItems.children[i].rotation.x += 0.1;
+      shieldItems.children[i].rotation.y += 0.1;
     }
-  }
+  };
 
   const enemyGroupsAnimation = () => {
     for (let i = 0; i < enemyGroups.children.length; i++) {
-      enemyGroups.children[i].rotation.z += 0.1
+      enemyGroups.children[i].rotation.z += 0.1;
     }
-  }
+  };
 
   // scene.add(ambientLight);
-
   // const zoomControls = new OrbitControls(camera, document.body);
   // zoomControls.enablePan = false;
   // zoomControls.enableRotate = true;
@@ -171,19 +175,19 @@ const createRender = async (gl) => {
   // function for detecting wall collisions
   const wallIntersects = () => {
     const intersectsUp = upRaycaster.intersectObjects(
-      mazeCompleted.children,
+      collisionObjects.children,
       true
     );
     const intersectsDown = downRaycaster.intersectObjects(
-      mazeCompleted.children,
+      collisionObjects.children,
       true
     );
     const intersectsLeft = leftRaycaster.intersectObjects(
-      mazeCompleted.children,
+      collisionObjects.children,
       true
     );
     const intersectsRight = rightRaycaster.intersectObjects(
-      mazeCompleted.children,
+      collisionObjects.children,
       true
     );
 
@@ -250,7 +254,7 @@ const createRender = async (gl) => {
     );
     if (intersects.length > 0 && !complete) {
       scene.remove(levelComplete);
-      window.cancelAnimationFrame(requestId)
+      window.cancelAnimationFrame(requestId);
       store.dispatch(editLevelComplete(true));
       store.dispatch(updatePlayerXP(5 + 8 * level));
       // updateUser(user._id, {
@@ -275,8 +279,11 @@ const createRender = async (gl) => {
   }
 
   let mousedown = false;
+  let clickTracker = 0;
+  let attackTracker = 0;
   function onMouseDown() {
     mousedown = true;
+    clickTracker++;
   }
   function onMouseUp() {
     mousedown = false;
@@ -318,6 +325,82 @@ const createRender = async (gl) => {
     }
   };
 
+  // function to attack enemy
+  const attackEnemy = () => {
+    pointerRaycaster.setFromCamera(pointer, camera);
+    const intersects = pointerRaycaster.intersectObjects(
+      enemyGroups.children,
+      true
+    );
+    let color;
+    if (
+      intersects.length > 0 &&
+      !complete &&
+      mousedown &&
+      clickTracker > attackTracker
+    ) {
+      const enemyIndex = enemies.findIndex(
+        (e) => e.uuid === intersects[0].object.parent.uuid
+      );
+      enemies[enemyIndex].hp -=
+        user.playerBaseDamage + user.equippedWeapon.damage;
+      store.dispatch(
+        updatePlayerXP(user.playerBaseDamage + user.equippedWeapon.damage)
+      );
+      if (enemies[enemyIndex].hp <= 0) {
+        enemyGroups.remove(intersects[0].object.parent);
+        enemies.splice(enemyIndex, 1);
+      }
+      attackTracker++;
+    }
+  };
+
+  const enemyAttack = () => {
+    const intersectsUp = upRaycaster.intersectObjects(
+      enemyGroups.children,
+      true
+    );
+    const intersectsDown = downRaycaster.intersectObjects(
+      enemyGroups.children,
+      true
+    );
+    const intersectsLeft = leftRaycaster.intersectObjects(
+      enemyGroups.children,
+      true
+    );
+    const intersectsRight = rightRaycaster.intersectObjects(
+      enemyGroups.children,
+      true
+    );
+    if (
+      intersectsUp.length > 0 ||
+      intersectsDown.length > 0 ||
+      intersectsLeft.length > 0 ||
+      intersectsRight.length > 0
+    ) {
+      if (user.equippedShield.shieldPoints > 0) {
+        store.dispatch(updateShieldPoints(-5));
+      }
+      if (
+        (user.equippedShield.uuid === "" || !user.equippedShield) &&
+        user.playerHp > 0
+      ) {
+        store.dispatch(updatePlayerHP(-5));
+      }
+      console.log(user.playerHp);
+    }
+  };
+
+  const hpChecker = () => {
+    state = store.getState()
+    user = state.user.user
+    if (user.playerHp <= 0){
+      window.cancelAnimationFrame(requestId);
+      store.dispatch(editLevelComplete(true));
+      complete = true;
+    }
+  }
+
   // event listeners
   document.addEventListener("keydown", onKeyDown);
   document.addEventListener("keyup", onKeyUp);
@@ -325,9 +408,9 @@ const createRender = async (gl) => {
   document.addEventListener("mousedown", onMouseDown);
   document.addEventListener("mouseup", onMouseUp);
 
-
   const render = () => {
     requestId = requestAnimationFrame(render);
+    hpChecker();
     shieldItemsAnimation();
     userShieldAnimation();
     enemyGroupsAnimation();
@@ -336,6 +419,8 @@ const createRender = async (gl) => {
     locationIntersects();
     levelCompleteIntersects();
     grabShield();
+    attackEnemy();
+    enemyAttack();
     // zoomControls.update();
     renderer.render(scene, camera);
     gl.endFrameEXP();

@@ -126,7 +126,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
     enemyGroup.position.set(
       Math.floor(Math.random() * mazeSize) * 5 + 2.5,
       Math.floor(Math.random() * mazeSize) * 5 + 2.5,
-      .75
+      1
     );
 
     enemy.uuid = enemyGroup.uuid;

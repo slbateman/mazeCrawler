@@ -95,13 +95,28 @@ export const userSlice = createSlice({
           state.user.playerLevelXp -
           ((state.user.playerLevel + 1) * 100 + state.user.playerLevel * 50);
         state.user.playerLevel = state.user.playerLevel + 1;
-        state.user.playerHp = state.user.playerLevel * 10 + 100
+        state.user.playerHp = state.user.playerLevel * 10 + 100;
+        state.user.playerBaseDamage = state.user.playerBaseDamage + 1;
       }
       updateUser(state.user._id, {
         playerXp: state.user.playerXp,
         playerLevelXp: state.user.playerLevelXp,
         playerLevel: state.user.playerLevel,
-        playerHp: state.user.playerHp
+        playerHp: state.user.playerHp,
+        playerBaseDamage: state.user.playerBaseDamage,
+      });
+    },
+    updatePlayerHP: (state, action) => {
+      state.user.playerHp = state.user.playerHp + action.payload;
+      updateUser(state.user._id, {
+        playerHp: state.user.playerHp,
+      });
+    },
+    updateShieldPoints: (state, action) => {
+      state.user.equippedShield.shieldPoints =
+        state.user.equippedShield.shieldPoints + action.payload;
+      updateUser(state.user._id, {
+        equippedShield: state.user.equippedShield,
       });
     },
   },
@@ -120,6 +135,8 @@ export const {
   updateEquippedShield,
   updateEquippedWeapon,
   updatePlayerXP,
+  updatePlayerHP,
+  updateShieldPoints,
 } = userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;

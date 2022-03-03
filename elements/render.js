@@ -258,12 +258,7 @@ const createRender = async (gl) => {
       scene.remove(levelComplete);
       window.cancelAnimationFrame(requestId);
       store.dispatch(editLevelComplete(true));
-      store.dispatch(updatePlayerXP(5 + 8 * level));
-      // updateUser(user._id, {
-      //   playerInv: user.playerInv,
-      //   equippedShield: user.equippedShield,
-      //   equippedWeapon: user.equippedWeapon
-      // })
+      store.dispatch(updatePlayerXP(25 + 12 * level));
       complete = true;
     }
   };
@@ -322,8 +317,6 @@ const createRender = async (gl) => {
         shields.findIndex((e) => e.uuid === shield.uuid),
         1
       );
-      // state = store.getState();
-      // user = state.user.user;
     }
   };
 
@@ -357,6 +350,9 @@ const createRender = async (gl) => {
     }
   };
 
+  let frameAttackTracker = 0;
+  let enemyIndex;
+  let newEnemyIndex = -1;
   const enemyAttack = () => {
     const intersectsUp = upRaycaster.intersectObjects(
       enemyGroups.children,
@@ -380,28 +376,70 @@ const createRender = async (gl) => {
       intersectsLeft.length > 0 ||
       intersectsRight.length > 0
     ) {
-      if (user.equippedShield.shieldPoints > 0) {
-        store.dispatch(updateShieldPoints(-5));
+      if (intersectsUp.length > 0) {
+        newEnemyIndex = enemies.findIndex(
+          (e) => e.uuid === intersectsUp[0].object.parent.uuid
+        );
+        if (enemyIndex !== newEnemyIndex) {
+          enemyIndex = newEnemyIndex;
+          frameAttackTracker = 0;
+        }
       }
-      if (
-        (user.equippedShield.uuid === "" || !user.equippedShield) &&
-        user.playerHp > 0
-      ) {
-        store.dispatch(updatePlayerHP(-5));
+      if (intersectsDown.length > 0) {
+        newEnemyIndex = enemies.findIndex(
+          (e) => e.uuid === intersectsDown[0].object.parent.uuid
+        );
+        if (enemyIndex !== newEnemyIndex) {
+          enemyIndex = newEnemyIndex;
+          frameAttackTracker = 0;
+        }
       }
-      console.log(user.playerHp);
+      if (intersectsLeft.length > 0) {
+        newEnemyIndex = enemies.findIndex(
+          (e) => e.uuid === intersectsLeft[0].object.parent.uuid
+        );
+        if (enemyIndex !== newEnemyIndex) {
+          enemyIndex = newEnemyIndex;
+          frameAttackTracker = 0;
+        }
+      }
+      if (intersectsRight.length > 0) {
+        newEnemyIndex = enemies.findIndex(
+          (e) => e.uuid === intersectsRight[0].object.parent.uuid
+        );
+        if (enemyIndex !== newEnemyIndex) {
+          enemyIndex = newEnemyIndex;
+          frameAttackTracker = 0;
+        }
+      }
+      if (frameAttackTracker === 0) {
+        console.log("attack");
+        if (user.equippedShield.shieldPoints > 0) {
+          store.dispatch(updateShieldPoints(-enemies[enemyIndex].damage));
+        }
+        if (
+          (user.equippedShield.uuid === "" || !user.equippedShield) &&
+          user.playerHp > 0
+        ) {
+          store.dispatch(updatePlayerHP(-enemies[enemyIndex].damage));
+        }
+        console.log(user.playerHp);
+      }
+      if (frameAttackTracker < enemies[enemyIndex].sps) frameAttackTracker++;
+      if (frameAttackTracker === enemies[enemyIndex].sps)
+        frameAttackTracker = 0;
     }
   };
 
   const hpChecker = () => {
-    state = store.getState()
-    user = state.user.user
-    if (user.playerHp <= 0){
+    state = store.getState();
+    user = state.user.user;
+    if (user.playerHp <= 0) {
       window.cancelAnimationFrame(requestId);
       store.dispatch(editYouDied(true));
-      store.dispatch(updatePlayerYouDied())
+      store.dispatch(updatePlayerYouDied());
     }
-  }
+  };
 
   // event listeners
   document.addEventListener("keydown", onKeyDown);

@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
   playerInvCap: { type: Number, default: 75 },
   playerInv: { type: Array, default: [] },
   playerInvWeight: { type: Number, default: 0 },
+  playerBaseDamage: { type: Number, default: 5 },
   equippedWeapon: {
     uuid: {type: String, default: "" },
     name: {type: String, default: "" },

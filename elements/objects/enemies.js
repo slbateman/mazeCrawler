@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Enemy from "../enemyClasses/enemyClasses";
+import { cells } from "./maze";
 
 export const enemyGroups = new THREE.Group();
 export const enemies = [];
@@ -14,7 +15,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
   }
 
   // random generation of enemy items
-  for (let i = 0; i < level * 1.5; i++) {
+  for (let i = 0; i < level * 2; i++) {
     const opts = [
       {
         name: "",
@@ -126,11 +127,17 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
     enemyGroup.add(enemyCone2);
     enemyGroup.add(enemyCone3);
     enemyGroup.add(enemyCone4);
-    enemyGroup.position.set(
-      Math.floor(Math.random() * mazeSize) * 5 + 2.5,
-      Math.floor(Math.random() * mazeSize) * 5 + 2.5,
-      1
-    );
+
+    let locationConfirmed = false;
+    let loc1;
+    let loc2;
+    while (!locationConfirmed) {
+      loc1 = Math.floor(Math.random() * mazeSize);
+      loc2 = Math.floor(Math.random() * mazeSize);
+      if (cells[loc1][loc2].item === false) locationConfirmed = true;
+    }
+    enemyGroup.position.set(loc1 * 5 + 2.5, loc2 * 5 + 2.5, 1);
+    cells[loc1][loc2].item = true;
 
     enemy.uuid = enemyGroup.uuid;
     enemies.push(enemy);

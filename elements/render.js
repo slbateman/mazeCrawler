@@ -327,7 +327,6 @@ const createRender = async (gl) => {
       enemyGroups.children,
       true
     );
-    let color;
     if (
       intersects.length > 0 &&
       !complete &&
@@ -350,7 +349,7 @@ const createRender = async (gl) => {
     }
   };
 
-  let frameAttackTracker = 0;
+  let frameEnemyAttackTracker = 0;
   let enemyIndex;
   let newEnemyIndex = -1;
   const enemyAttack = () => {
@@ -382,7 +381,7 @@ const createRender = async (gl) => {
         );
         if (enemyIndex !== newEnemyIndex) {
           enemyIndex = newEnemyIndex;
-          frameAttackTracker = 0;
+          frameEnemyAttackTracker = 0;
         }
       }
       if (intersectsDown.length > 0) {
@@ -391,7 +390,7 @@ const createRender = async (gl) => {
         );
         if (enemyIndex !== newEnemyIndex) {
           enemyIndex = newEnemyIndex;
-          frameAttackTracker = 0;
+          frameEnemyAttackTracker = 0;
         }
       }
       if (intersectsLeft.length > 0) {
@@ -400,7 +399,7 @@ const createRender = async (gl) => {
         );
         if (enemyIndex !== newEnemyIndex) {
           enemyIndex = newEnemyIndex;
-          frameAttackTracker = 0;
+          frameEnemyAttackTracker = 0;
         }
       }
       if (intersectsRight.length > 0) {
@@ -409,11 +408,10 @@ const createRender = async (gl) => {
         );
         if (enemyIndex !== newEnemyIndex) {
           enemyIndex = newEnemyIndex;
-          frameAttackTracker = 0;
+          frameEnemyAttackTracker = 0;
         }
       }
-      if (frameAttackTracker === 0) {
-        console.log("attack");
+      if (frameEnemyAttackTracker === 0) {
         if (user.equippedShield.shieldPoints > 0) {
           store.dispatch(updateShieldPoints(-enemies[enemyIndex].damage));
         }
@@ -423,11 +421,11 @@ const createRender = async (gl) => {
         ) {
           store.dispatch(updatePlayerHP(-enemies[enemyIndex].damage));
         }
-        console.log(user.playerHp);
       }
-      if (frameAttackTracker < enemies[enemyIndex].sps) frameAttackTracker++;
-      if (frameAttackTracker === enemies[enemyIndex].sps)
-        frameAttackTracker = 0;
+      if (frameEnemyAttackTracker < enemies[enemyIndex].sps)
+        frameEnemyAttackTracker++;
+      if (frameEnemyAttackTracker === enemies[enemyIndex].sps)
+        frameEnemyAttackTracker = 0;
     }
   };
 

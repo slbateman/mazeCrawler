@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Shield from "../itemClasses/shieldClasses";
+import { cells } from "./maze";
 
 export const shieldItems = new THREE.Group();
 export const shields = [];
@@ -21,7 +22,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         type: "shield",
         color: "green",
         size: 0.85,
-        shieldPoints: 8,
+        shieldPoints: 5,
         multiplier: 1,
       },
       {
@@ -29,7 +30,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         type: "shield",
         color: "blue",
         size: 1,
-        shieldPoints: 12,
+        shieldPoints: 8,
         multiplier: 2,
       },
       {
@@ -37,7 +38,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         type: "shield",
         color: "white",
         size: 1.15,
-        shieldPoints: 16,
+        shieldPoints: 12,
         multiplier: 3,
       },
     ];
@@ -54,8 +55,8 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
       opacity: 0.35,
     });
     const shieldSphere = new THREE.Mesh(shieldSphereGeometry, shieldMaterial);
-    shieldSphere.receiveShadow = true
-    
+    shieldSphere.receiveShadow = true;
+
     const shieldRingGeometry = new THREE.TorusGeometry(
       shield.size / 2,
       0.025,
@@ -65,25 +66,31 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
     const shieldRingMaterial = new THREE.MeshStandardMaterial({
       color: shield.color,
     });
-    const shieldRing1 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial)
-    shieldRing1.receiveShadow = true
-    const shieldRing2 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial)
-    shieldRing2.receiveShadow = true
-    shieldRing2.rotation.x = Math.PI / 2
-    const shieldRing3 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial)
-    shieldRing3.receiveShadow = true
-    shieldRing3.rotation.y = Math.PI / 2
-    
-    const shieldItem = new THREE.Group()
-    shieldItem.add(shieldSphere)
-    shieldItem.add(shieldRing1)
-    shieldItem.add(shieldRing2)
-    shieldItem.add(shieldRing3)
-    shieldItem.position.set(
-      Math.floor(Math.random() * mazeSize) * 5 + 2.5,
-      Math.floor(Math.random() * mazeSize) * 5 + 2.5,
-      shield.size / 2
-    );
+    const shieldRing1 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial);
+    shieldRing1.receiveShadow = true;
+    const shieldRing2 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial);
+    shieldRing2.receiveShadow = true;
+    shieldRing2.rotation.x = Math.PI / 2;
+    const shieldRing3 = new THREE.Mesh(shieldRingGeometry, shieldRingMaterial);
+    shieldRing3.receiveShadow = true;
+    shieldRing3.rotation.y = Math.PI / 2;
+
+    const shieldItem = new THREE.Group();
+    shieldItem.add(shieldSphere);
+    shieldItem.add(shieldRing1);
+    shieldItem.add(shieldRing2);
+    shieldItem.add(shieldRing3);
+
+    let locationConfirmed = false;
+    let loc1;
+    let loc2;
+    while (!locationConfirmed) {
+      loc1 = Math.floor(Math.random() * mazeSize);
+      loc2 = Math.floor(Math.random() * mazeSize);
+      if (cells[loc1][loc2].item === false) locationConfirmed = true;
+    }
+    shieldItem.position.set(loc1 * 5 + 2.5, loc2 * 5 + 2.5, shield.size / 2);
+    cells[loc1][loc2].item = true;
 
     shield.uuid = shieldItem.uuid;
     shields.push(shield);

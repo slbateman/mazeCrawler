@@ -7,6 +7,8 @@ import { levelCompleteGenerator } from "./levelComplete";
 import { shieldItemsGenerator } from "./shieldItems";
 import { enemyGroupsGenerator } from "./enemies";
 
+export let cells = []
+
 const mazeGenerator = (level) => {
   const state = store.getState();
   const playerLevel = state.user.user.playerLevel;
@@ -15,7 +17,7 @@ const mazeGenerator = (level) => {
   const mazeSize = 5 + (level * 2 - 2);
 
   // cell matrix
-  const cells = [];
+  cells = [];
   for (let i = 0; i < mazeSize; i++) {
     cells.push([]);
     for (let j = 0; j < mazeSize; j++) {
@@ -27,10 +29,12 @@ const mazeGenerator = (level) => {
         wallUp: 1,
         wallDown: 1,
         visited: false,
+        item: false,
       };
     }
   }
   cells[0][0].visited = true;
+  cells[(mazeSize-1)/2][(mazeSize-1)/2].item = true
   let currentCell = cells[0][0];
   const cellStack = [currentCell];
 
@@ -97,12 +101,12 @@ const mazeGenerator = (level) => {
     }
   }
 
+  groundGenerator(mazeSize)
+  pillarsGenerator(mazeSize);
+  pathLightsGenerator(mazeSize);
+  levelCompleteGenerator(mazeSize);
   shieldItemsGenerator(level, playerLevel, mazeSize);
   enemyGroupsGenerator(level, playerLevel, mazeSize)
-  levelCompleteGenerator(mazeSize);
-  pathLightsGenerator(mazeSize);
-  pillarsGenerator(mazeSize);
-  groundGenerator(mazeSize)
 };
 
 export default mazeGenerator;

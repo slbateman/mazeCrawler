@@ -14,7 +14,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
   }
 
   // random generation of enemy items
-  for (let i = 0; i < level; i++) {
+  for (let i = 0; i < level * 1.5; i++) {
     const opts = [
       {
         name: "",
@@ -88,7 +88,10 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
     const enemyInnerSphereMaterial = new THREE.MeshStandardMaterial({
       color: enemy.color,
     });
-    const enemyInnerSphere = new THREE.Mesh(enemyInnerSphereGeometry, enemyInnerSphereMaterial);
+    const enemyInnerSphere = new THREE.Mesh(
+      enemyInnerSphereGeometry,
+      enemyInnerSphereMaterial
+    );
     enemyInnerSphere.receiveShadow = true;
 
     const enemyConeGeometry = new THREE.ConeGeometry(
@@ -102,23 +105,23 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
     });
     const enemyCone1 = new THREE.Mesh(enemyConeGeometry, enemyConeMaterial);
     enemyCone1.receiveShadow = true;
-    enemyCone1.position.y += enemy.size / 1.5
+    enemyCone1.position.y += enemy.size / 1.5;
     const enemyCone2 = new THREE.Mesh(enemyConeGeometry, enemyConeMaterial);
     enemyCone2.receiveShadow = true;
     enemyCone2.rotation.z = Math.PI / 2;
-    enemyCone2.position.x -= enemy.size / 1.5
+    enemyCone2.position.x -= enemy.size / 1.5;
     const enemyCone3 = new THREE.Mesh(enemyConeGeometry, enemyConeMaterial);
     enemyCone3.receiveShadow = true;
     enemyCone3.rotation.z = Math.PI / -2;
-    enemyCone3.position.x += enemy.size / 1.5
+    enemyCone3.position.x += enemy.size / 1.5;
     const enemyCone4 = new THREE.Mesh(enemyConeGeometry, enemyConeMaterial);
     enemyCone4.receiveShadow = true;
     enemyCone4.rotation.z = Math.PI;
-    enemyCone4.position.y -= enemy.size / 1.5
+    enemyCone4.position.y -= enemy.size / 1.5;
 
     const enemyGroup = new THREE.Group();
     enemyGroup.add(enemySphere);
-    enemyGroup.add(enemyInnerSphere)
+    enemyGroup.add(enemyInnerSphere);
     enemyGroup.add(enemyCone1);
     enemyGroup.add(enemyCone2);
     enemyGroup.add(enemyCone3);

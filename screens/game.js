@@ -9,6 +9,7 @@ import {
   selectLevelComplete,
   editCurrentLevel,
   selectUser,
+  editYouDied,
 } from "../state/userSlice";
 import GameHUD from "./gameHUD";
 
@@ -31,6 +32,10 @@ export default function game({ navigation }) {
     if (levelComplete.complete) {
       navigation.goBack();
       navigation.navigate("Complete");
+    }
+    if (levelComplete.died) {
+      navigation.goBack();
+      navigation.navigate("YouDied");
     }
   }, [levelComplete]);
 

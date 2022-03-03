@@ -7,6 +7,7 @@ let localUserInfo = JSON.parse(localStorage.getItem("localUserInfo"));
 let levelComplete = {
   level: 0,
   complete: false,
+  died: false,
 };
 
 if (!localUserInfo) {
@@ -66,6 +67,9 @@ export const userSlice = createSlice({
     editLevelComplete: (state, action) => {
       state.levelComplete.complete = action.payload;
     },
+    editYouDied: (state, action) => {
+      state.levelComplete.died = action.payload;
+    },
     editCurrentLevel: (state, action) => {
       state.user.currentLevel = action.payload.currentLevel;
       updateUser(action.payload._id, {
@@ -119,6 +123,47 @@ export const userSlice = createSlice({
         equippedShield: state.user.equippedShield,
       });
     },
+    updatePlayerYouDied: (state, action) => {
+      if (state.user.playerLevel === 0) state.user.playerLevel = 0
+      else state.user.playerLevel = state.user.playerLevel - 1;
+      state.user.playerXp = state.user.playerXp - state.user.playerLevelXp;
+      state.user.playerLevelXp = 0;
+      state.user.playerHp = state.user.playerLevel * 10 + 100;
+      state.user.playerBaseDamage = 5 + state.user.playerLevel;
+      state.user.playerInv = [];
+      if (state.user.equippedShield){
+      state.user.equippedShield = {
+        uuid: "",
+        name: "",
+        type: "",
+        color: "",
+        size: 0,
+        shieldPoints: 0,
+        shieldMaxPoints: 0,
+      };};
+      if (state.user.equippedWeapon) {
+      state.user.equippedWeapon = {
+        uuid: "",
+        name: "",
+        type: "",
+        color: "",
+        size: 0,
+        damage: 0,
+        charge: 0,
+        maxCharge: 0,
+        distance: 0,
+      };};
+      updateUser(state.user._id, {
+        playerXp: state.user.playerXp,
+        playerLevelXp: state.user.playerLevelXp,
+        playerLevel: state.user.playerLevel,
+        playerHp: state.user.playerHp,
+        playerBaseDamage: state.user.playerBaseDamage,
+        playerInv: state.user.playerInv,
+        equippedShield: state.user.equippedShield,
+        equippedWeapon: state.user.equippedWeapon,
+      });
+    },
   },
 });
 
@@ -129,6 +174,7 @@ export const {
   addUser,
   removeUser,
   editLevelComplete,
+  editYouDied,
   editLevel,
   editCurrentLevel,
   updatePlayerInv,
@@ -137,6 +183,7 @@ export const {
   updatePlayerXP,
   updatePlayerHP,
   updateShieldPoints,
+  updatePlayerYouDied,
 } = userSlice.actions;
 
 export const selectAllUsers = (state) => state.user.allUsers;

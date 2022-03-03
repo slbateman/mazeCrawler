@@ -21,7 +21,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         type: "shield",
         color: "green",
         size: 0.85,
-        shieldPoints: 10,
+        shieldPoints: 8,
         multiplier: 1,
       },
       {
@@ -29,7 +29,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         type: "shield",
         color: "blue",
         size: 1,
-        shieldPoints: 25,
+        shieldPoints: 12,
         multiplier: 2,
       },
       {
@@ -37,7 +37,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
         type: "shield",
         color: "white",
         size: 1.15,
-        shieldPoints: 50,
+        shieldPoints: 16,
         multiplier: 3,
       },
     ];

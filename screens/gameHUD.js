@@ -28,6 +28,7 @@ export default function GameHUD({ level }) {
           <GameHUDshield />
           <GameHUDweapon />
         </View>
+        <View style={{ flex: 3 }}/>
         <View style={{ flex: 1 }}>
           <Text style={globalStyles.gameHUDinventoryHeader}>{user.playerInv.length > 0 ? "Inventory" : ""}</Text>
           <GameHUDinventoryShields />

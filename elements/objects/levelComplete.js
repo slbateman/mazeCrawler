@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+import { cells } from "./maze";
+
 export const levelComplete = new THREE.Group();
 
 export const levelCompleteGenerator = (mazeSize) => {
@@ -29,6 +31,7 @@ export const levelCompleteGenerator = (mazeSize) => {
       (-mazeSize * 5) / 2 + 2.5,
       2
     );
+    cells[0][0].item = true
   }
   if (corner === 1) {
     levelComplete.position.set(
@@ -36,6 +39,7 @@ export const levelCompleteGenerator = (mazeSize) => {
       (-mazeSize * 5) / 2 + 2.5,
       2
     );
+    cells[mazeSize-1][0].item = true
   }
   if (corner === 2) {
     levelComplete.position.set(
@@ -43,6 +47,7 @@ export const levelCompleteGenerator = (mazeSize) => {
       (mazeSize * 5) / 2 - 2.5,
       2
     );
+    cells[0][mazeSize-1].item = true
   }
   if (corner === 3) {
     levelComplete.position.set(
@@ -50,5 +55,7 @@ export const levelCompleteGenerator = (mazeSize) => {
       (mazeSize * 5) / 2 - 2.5,
       2
     );
+    cells[mazeSize-1][mazeSize-1].item = true
   }
+  console.log(cells)
 };

@@ -57,5 +57,4 @@ export const levelCompleteGenerator = (mazeSize) => {
     );
     cells[mazeSize-1][mazeSize-1].item = true
   }
-  console.log(cells)
 };

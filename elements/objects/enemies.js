@@ -24,7 +24,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
         size: 0.5,
         hp: 75,
         damage: 1,
-        sps: 2,
+        sps: 3,
         distance: 5,
       },
       {
@@ -34,7 +34,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
         size: 0.75,
         hp: 100,
         damage: 2,
-        sps: 3,
+        sps: 5,
         distance: 10,
       },
       {
@@ -44,7 +44,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
         size: 1,
         hp: 150,
         damage: 3,
-        sps: 4,
+        sps: 7,
         distance: 10,
       },
       {
@@ -54,7 +54,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
         size: 1.25,
         hp: 225,
         damage: 4,
-        sps: 5,
+        sps: 9,
         distance: 15,
       },
       {
@@ -64,7 +64,7 @@ export const enemyGroupsGenerator = (level, playerLevel, mazeSize) => {
         size: 1.5,
         hp: 300,
         damage: 5,
-        sps: 6,
+        sps: 11,
         distance: 15,
       },
     ];

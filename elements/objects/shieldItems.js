@@ -15,7 +15,7 @@ export const shieldItemsGenerator = (level, playerLevel, mazeSize) => {
   }
 
   // random generation of shield items
-  for (let i = 0; i < level; i++) {
+  for (let i = 0; i < level * 0.5; i++) {
     const opts = [
       {
         name: "Light Shield",

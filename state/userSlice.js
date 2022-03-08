@@ -111,7 +111,12 @@ export const userSlice = createSlice({
       });
     },
     updatePlayerHP: (state, action) => {
-      state.user.playerHp = state.user.playerHp + action.payload;
+      if (
+        state.user.playerHp + action.payload >
+        state.user.playerLevel * 10 + 100
+      ) {
+        state.user.playerHp = state.user.playerLevel * 10 + 100;
+      } else state.user.playerHp = state.user.playerHp + action.payload;
       updateUser(state.user._id, {
         playerHp: state.user.playerHp,
       });
@@ -124,35 +129,37 @@ export const userSlice = createSlice({
       });
     },
     updatePlayerYouDied: (state, action) => {
-      if (state.user.playerLevel === 0) state.user.playerLevel = 0
+      if (state.user.playerLevel === 0) state.user.playerLevel = 0;
       else state.user.playerLevel = state.user.playerLevel - 1;
       state.user.playerXp = state.user.playerXp - state.user.playerLevelXp;
       state.user.playerLevelXp = 0;
       state.user.playerHp = state.user.playerLevel * 10 + 100;
       state.user.playerBaseDamage = 5 + state.user.playerLevel;
       state.user.playerInv = [];
-      if (state.user.equippedShield){
-      state.user.equippedShield = {
-        uuid: "",
-        name: "",
-        type: "",
-        color: "",
-        size: 0,
-        shieldPoints: 0,
-        shieldMaxPoints: 0,
-      };};
+      if (state.user.equippedShield) {
+        state.user.equippedShield = {
+          uuid: "",
+          name: "",
+          type: "",
+          color: "",
+          size: 0,
+          shieldPoints: 0,
+          shieldMaxPoints: 0,
+        };
+      }
       if (state.user.equippedWeapon) {
-      state.user.equippedWeapon = {
-        uuid: "",
-        name: "",
-        type: "",
-        color: "",
-        size: 0,
-        damage: 0,
-        charge: 0,
-        maxCharge: 0,
-        distance: 0,
-      };};
+        state.user.equippedWeapon = {
+          uuid: "",
+          name: "",
+          type: "",
+          color: "",
+          size: 0,
+          damage: 0,
+          charge: 0,
+          maxCharge: 0,
+          distance: 0,
+        };
+      }
       updateUser(state.user._id, {
         playerXp: state.user.playerXp,
         playerLevelXp: state.user.playerLevelXp,

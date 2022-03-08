@@ -6,6 +6,7 @@ import { pathLightsGenerator } from "./pathLights";
 import { levelCompleteGenerator } from "./levelComplete";
 import { shieldItemsGenerator } from "./shieldItems";
 import { enemyGroupsGenerator } from "./enemies";
+import { hpBoosterItemsGenerator } from "./hpBoosters";
 
 export let cells = []
 
@@ -107,6 +108,7 @@ const mazeGenerator = (level) => {
   levelCompleteGenerator(mazeSize);
   shieldItemsGenerator(level, playerLevel, mazeSize);
   enemyGroupsGenerator(level, playerLevel, mazeSize)
+  hpBoosterItemsGenerator(level, mazeSize)
 };
 
 export default mazeGenerator;

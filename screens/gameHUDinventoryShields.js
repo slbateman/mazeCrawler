@@ -23,7 +23,8 @@ export default function GameHUDinventoryShields() {
     if (user.equippedShield.shieldPoints > 0) {
       inventory = [...inventory, user.equippedShield];
     }
-    inventory.splice(i, 1);
+    let index = inventory.findIndex((e) => e.uuid === data.uuid);
+    inventory.splice(index, 1);
     dispatch(
       updatePlayerInv({
         playerInv: inventory,
@@ -50,7 +51,10 @@ export default function GameHUDinventoryShields() {
   };
 
   useEffect(() => {
-    if (user.equippedShield.uuid !== "" && user.equippedShield.shieldPoints <= 0){
+    if (
+      user.equippedShield.uuid !== "" &&
+      user.equippedShield.shieldPoints <= 0
+    ) {
       dispatch(
         updateEquippedShield({
           equippedShield: {
@@ -64,10 +68,9 @@ export default function GameHUDinventoryShields() {
           },
         })
       );
-      removeUserShield()
+      removeUserShield();
     }
-  }, [user])
-  
+  }, [user]);
 
   return !shieldsExist ? (
     <></>
@@ -84,7 +87,7 @@ export default function GameHUDinventoryShields() {
                 <Text
                   key={`shieldItem${i}`}
                   style={globalStyles.gameHUDinventoryItemName}
-                  onPress={() => equipHandler(data, i)}
+                  onPress={() => equipHandler(data)}
                 >
                   {data.uuid === user.equippedShield.uuid ? `-equipped- ` : ""}
                   {data.name}- {data.shieldPoints}/{data.shieldMaxPoints}

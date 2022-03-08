@@ -11,6 +11,7 @@ import { pathLights } from "./objects/pathLights";
 import { levelComplete } from "./objects/levelComplete";
 import { shieldItems, shields } from "./objects/shieldItems";
 import { enemyGroups, enemies } from "./objects/enemies";
+import { hpBoosterItems, hpBoosters } from "./objects/hpBoosters";
 import { userShield, userShieldGenerator } from "./objects/userShield";
 import {
   updatePlayerInv,
@@ -61,6 +62,7 @@ const createRender = async (gl) => {
   scene.add(pathLights);
   scene.add(levelComplete);
   scene.add(shieldItems);
+  scene.add(hpBoosterItems);
 
   const playerSet = new THREE.Group();
   topDownSpotlight.target = player;
@@ -84,9 +86,41 @@ const createRender = async (gl) => {
     }
   };
 
+  let enemyMove = "left";
+  let leftRightPosition = 0;
+  let upDownPosition = 0;
+  let enemySpeed = 0.1;
+  let enemySq = level * 5;
   const enemyGroupsAnimation = () => {
     for (let i = 0; i < enemyGroups.children.length; i++) {
       enemyGroups.children[i].rotation.z += 0.1;
+      switch (enemyMove) {
+        case "left":
+          if (leftRightPosition > -enemySq * enemyGroups.children.length) {
+            leftRightPosition -= enemySpeed;
+            enemyGroups.children[i].position.x -= enemySpeed;
+          } else enemyMove = "up";
+          break;
+        case "up":
+          if (upDownPosition < enemySq * enemyGroups.children.length) {
+            upDownPosition += enemySpeed;
+            enemyGroups.children[i].position.y += enemySpeed;
+          } else enemyMove = "right";
+          break;
+        case "right":
+          if (leftRightPosition < enemySq * enemyGroups.children.length) {
+            leftRightPosition += enemySpeed;
+            enemyGroups.children[i].position.x += enemySpeed;
+          } else enemyMove = "down";
+          break;
+        case "down":
+          if (upDownPosition > -enemySq * enemyGroups.children.length) {
+            upDownPosition -= enemySpeed;
+            enemyGroups.children[i].position.y -= enemySpeed;
+          } else enemyMove = "left";
+        default:
+          break;
+      }
     }
   };
 
@@ -319,7 +353,39 @@ const createRender = async (gl) => {
       );
     }
   };
-
+  // function for shield item grab
+  const grabHpBooster = () => {
+    pointerRaycaster.setFromCamera(pointer, camera);
+    const intersects = pointerRaycaster.intersectObjects(
+      hpBoosterItems.children,
+      true
+    );
+    if (intersects.length > 0 && !complete && mousedown) {
+      const hpBooster = hpBoosters.find(
+        (e) => e.uuid === intersects[0].object.parent.uuid
+      );
+      store.dispatch(
+        updatePlayerInv({
+          playerInv: [
+            ...user.playerInv,
+            {
+              uuid: hpBooster.uuid,
+              name: hpBooster.itemName,
+              type: hpBooster.type,
+              color: hpBooster.color,
+              size: hpBooster.size,
+              hpBoost: hpBooster.hpBoost,
+            },
+          ],
+        })
+      );
+      hpBoosterItems.remove(intersects[0].object.parent);
+      hpBoosters.splice(
+        hpBoosters.findIndex((e) => e.uuid === hpBooster.uuid),
+        1
+      );
+    }
+  };
   // function to attack enemy
   const attackEnemy = () => {
     pointerRaycaster.setFromCamera(pointer, camera);
@@ -457,7 +523,8 @@ const createRender = async (gl) => {
     locationIntersects();
     levelCompleteIntersects();
     grabShield();
-    attackEnemy();
+    grabHpBooster();
+    // attackEnemy();
     enemyAttack();
     // zoomControls.update();
     renderer.render(scene, camera);

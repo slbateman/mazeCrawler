@@ -90,7 +90,7 @@ const createRender = async (gl) => {
   let leftRightPosition = 0;
   let upDownPosition = 0;
   let enemySpeed = 0.1;
-  let enemySq = level * 5;
+  let enemySq = level <= 5 ? 5 : level <= 10 ? 10 : level <= 15 ? 15 : 20 ;
   const enemyGroupsAnimation = () => {
     for (let i = 0; i < enemyGroups.children.length; i++) {
       enemyGroups.children[i].rotation.z += 0.1;
@@ -351,6 +351,7 @@ const createRender = async (gl) => {
         shields.findIndex((e) => e.uuid === shield.uuid),
         1
       );
+      store.dispatch(updatePlayerXP(level * 5));
     }
   };
   // function for shield item grab
@@ -384,6 +385,7 @@ const createRender = async (gl) => {
         hpBoosters.findIndex((e) => e.uuid === hpBooster.uuid),
         1
       );
+      store.dispatch(updatePlayerXP(level * 5));
     }
   };
   // function to attack enemy

@@ -9,6 +9,7 @@ export const getAllUsers = async (req, res) => {
     res.status(404).json({ message: error });
   }
 };
+
 export const getUser = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id))

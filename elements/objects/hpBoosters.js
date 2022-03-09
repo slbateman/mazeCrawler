@@ -15,7 +15,7 @@ export const hpBoosterItemsGenerator = (level, mazeSize) => {
   }
 
   // random generation of hpBooster items
-  for (let i = 0; i < level * .35 * 0.5; i++) {
+  for (let i = 0; i < level * .45; i++) {
     const opts = [
       {
         name: "HP Booster",

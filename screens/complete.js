@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { editLevel, editLevelComplete, selectUser } from "../state/userSlice";
 import backgroundImage from "../assets/backgroundImage.png";
 import mazeGenerator from "../elements/objects/maze";
+import { requestId } from "../elements/render";
 
 export default function complete({ navigation }) {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export default function complete({ navigation }) {
   const user = useSelector(selectUser);
 
   const pressHandler = (num) => {
+    window.cancelAnimationFrame(requestId)
     dispatch(editLevel(num))
     dispatch(editLevelComplete(false));
     mazeGenerator(num)

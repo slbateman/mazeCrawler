@@ -96,8 +96,7 @@ export default function levels({ navigation }) {
             />
             <TextInput
               style={globalStyles.textInput}
-              type="password"
-              textContentType="password"
+              secureTextEntry="true"
               onChangeText={setPassword}
               value={password}
               placeholder="enter password"

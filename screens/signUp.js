@@ -62,8 +62,7 @@ export default function signUp({ navigation }) {
           />
           <TextInput
             style={globalStyles.textInput}
-            type="password"
-            textContentType="password"
+            secureTextEntry="true"
             onChangeText={setPassword1}
             value={password1}
             placeholder="create password"
@@ -71,8 +70,7 @@ export default function signUp({ navigation }) {
           />
           <TextInput
             style={globalStyles.textInput}
-            type="password"
-            textContentType="password"
+            secureTextEntry="true"
             onChangeText={setPassword2}
             value={password2}
             placeholder="confirm password"

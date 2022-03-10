@@ -45,6 +45,8 @@ export default function levels({ navigation }) {
         } else alert("password is incorrect");
       } else alert("there is no account with this email");
     }
+    setEmail("")
+    setPassword("")
   };
 
   const logoutHandler = () => {
@@ -54,6 +56,8 @@ export default function levels({ navigation }) {
         loggedIn: false,
       })
     );
+    setEmail("")
+    setPassword("")
   };
 
   return (

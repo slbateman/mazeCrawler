@@ -40,6 +40,9 @@ export default function signUp({ navigation }) {
         })
       );
     }
+    setEmail("")
+    setPassword1("")
+    setPassword2("")
   };
 
   return (
